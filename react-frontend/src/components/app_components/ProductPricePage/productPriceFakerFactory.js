@@ -1,0 +1,19 @@
+
+import { faker } from "@faker-js/faker";
+export default (user,count) => {
+    let data = [];
+    for (let i = 0; i < count; i++) {
+        const fake = {
+productName: faker.lorem.sentence(1),
+basePrice: faker.lorem.sentence(1),
+currency: faker.lorem.sentence(1),
+discountedPrice: faker.lorem.sentence(1),
+taxPercentage: faker.lorem.sentence(1),
+
+updatedBy: user._id,
+createdBy: user._id
+        };
+        data = [...data, fake];
+    }
+    return data;
+};

@@ -1,13 +1,13 @@
-import { Column } from 'primereact/column';
-import { DataTable } from 'primereact/datatable';
-import React, { useState, useRef, useEffect} from 'react';
-import _ from 'lodash';
-import { Button } from 'primereact/button';
-import { Image } from 'primereact/image';
+import { Column } from "primereact/column";
+import { DataTable } from "primereact/datatable";
+import React, { useState, useRef, useEffect } from "react";
+import _ from "lodash";
+import { Button } from "primereact/button";
+import { Image } from "primereact/image";
 import { useParams } from "react-router-dom";
 import moment from "moment";
 import UploadService from "../../../services/UploadService";
-import { InputText } from 'primereact/inputtext';
+import { InputText } from "primereact/inputtext";
 import { Dialog } from "primereact/dialog";
 import { MultiSelect } from "primereact/multiselect";
 import DownloadCSV from "../../../utils/DownloadCSV";
@@ -19,15 +19,35 @@ import DuplicateIcon from "../../../assets/media/Duplicate.png";
 import DeleteIcon from "../../../assets/media/Trash.png";
 import { Checkbox } from "primereact/checkbox";
 
-const ProductDataTable = ({ items, fields, onEditRow, onRowDelete, onRowClick, searchDialog, setSearchDialog,   showUpload, setShowUpload,
-    showFilter, setShowFilter,
-    showColumns, setShowColumns, onClickSaveFilteredfields ,
-    selectedFilterFields, setSelectedFilterFields,
-    selectedHideFields, setSelectedHideFields, onClickSaveHiddenfields, loading, user,   selectedDelete,
-  setSelectedDelete, onCreateResult}) => {
-    const dt = useRef(null);
-    const urlParams = useParams();
-    const [globalFilter, setGlobalFilter] = useState('');
+const ProductDataTable = ({
+  items,
+  fields,
+  onEditRow,
+  onRowDelete,
+  onRowClick,
+  searchDialog,
+  setSearchDialog,
+  showUpload,
+  setShowUpload,
+  showFilter,
+  setShowFilter,
+  showColumns,
+  setShowColumns,
+  onClickSaveFilteredfields,
+  selectedFilterFields,
+  setSelectedFilterFields,
+  selectedHideFields,
+  setSelectedHideFields,
+  onClickSaveHiddenfields,
+  loading,
+  user,
+  selectedDelete,
+  setSelectedDelete,
+  onCreateResult,
+}) => {
+  const dt = useRef(null);
+  const urlParams = useParams();
+  const [globalFilter, setGlobalFilter] = useState("");
   const [selectedItems, setSelectedItems] = useState([]);
   const [showDialog, setShowDialog] = useState(false);
   const [data, setData] = useState([]);
@@ -53,15 +73,44 @@ const ProductDataTable = ({ items, fields, onEditRow, onRowDelete, onRowClick, s
     </div>
   );
 
-const pTemplate0 = (rowData, { rowIndex }) => <p >{rowData.productTitle}</p>
-const inputTextareaTemplate1 = (rowData, { rowIndex }) => <p >{rowData.description}</p>
-const multiselectTemplate2 = (rowData, { rowIndex }) => (<ul className="list-none" >{rowData.products.map((i,x) => (<li key={x}> productName: {i.productName},basePrice: {i.basePrice},currency: {i.currency},discountedPrice: {i.discountedPrice},taxPercentage: {i.taxPercentage}</li>))}</ul>)
-const imageTemplate3 = (rowData, { rowIndex }) => <Image src={rowData.productImage}  alt="Image" height="60px" />
-const imageTemplate4 = (rowData, { rowIndex }) => <Image src={rowData.smallImage}  alt="Image" height="60px" />
-    const editTemplate = (rowData, { rowIndex }) => <Button onClick={() => onEditRow(rowData, rowIndex)} icon={`pi ${rowData.isEdit ? "pi-check" : "pi-pencil"}`} className={`p-button-rounded p-button-text ${rowData.isEdit ? "p-button-success" : "p-button-warning"}`} />;
-    const deleteTemplate = (rowData, { rowIndex }) => <Button onClick={() => onRowDelete(rowData._id)} icon="pi pi-times" className="p-button-rounded p-button-danger p-button-text" />;
-    
-      const checkboxTemplate = (rowData) => (
+  const pTemplate0 = (rowData, { rowIndex }) => <p>{rowData.productTitle}</p>;
+  const inputTextareaTemplate1 = (rowData, { rowIndex }) => (
+    <p>{rowData.description}</p>
+  );
+  const multiselectTemplate2 = (rowData, { rowIndex }) => (
+    <ul className="list-none">
+      {rowData.products.map((i, x) => (
+        <li key={x}>
+          {" "}
+          productName: {i.productName},basePrice: {i.basePrice},currency:{" "}
+          {i.currency},discountedPrice: {i.discountedPrice},taxPercentage:{" "}
+          {i.taxPercentage}
+        </li>
+      ))}
+    </ul>
+  );
+  const imageTemplate3 = (rowData, { rowIndex }) => (
+    <Image src={rowData.productImage} alt="Image" height="60px" />
+  );
+  const imageTemplate4 = (rowData, { rowIndex }) => (
+    <Image src={rowData.smallImage} alt="Image" height="60px" />
+  );
+  const editTemplate = (rowData, { rowIndex }) => (
+    <Button
+      onClick={() => onEditRow(rowData, rowIndex)}
+      icon={`pi ${rowData.isEdit ? "pi-check" : "pi-pencil"}`}
+      className={`p-button-rounded p-button-text ${rowData.isEdit ? "p-button-success" : "p-button-warning"}`}
+    />
+  );
+  const deleteTemplate = (rowData, { rowIndex }) => (
+    <Button
+      onClick={() => onRowDelete(rowData._id)}
+      icon="pi pi-times"
+      className="p-button-rounded p-button-danger p-button-text"
+    />
+  );
+
+  const checkboxTemplate = (rowData) => (
     <Checkbox
       checked={selectedItems.some((item) => item._id === rowData._id)}
       onChange={(e) => {
@@ -102,7 +151,7 @@ const imageTemplate4 = (rowData, { rowIndex }) => <Image src={rowData.smallImage
       console.error("Failed to delete selected records", error);
     }
   };
-    
+
   const handleMessage = () => {
     setShowDialog(true); // Open the dialog
   };
@@ -111,10 +160,10 @@ const imageTemplate4 = (rowData, { rowIndex }) => <Image src={rowData.smallImage
     setShowDialog(false); // Close the dialog
   };
 
-    return (
-        <>
-        <DataTable 
-           value={items}
+  return (
+    <>
+      <DataTable
+        value={items}
         ref={dt}
         removableSort
         onRowClick={onRowClick}
@@ -134,22 +183,59 @@ const imageTemplate4 = (rowData, { rowIndex }) => <Image src={rowData.smallImage
         onCreateResult={onCreateResult}
         globalFilter={globalFilter}
         header={header}
-        >
-                <Column
+      >
+        <Column
           selectionMode="multiple"
           headerStyle={{ width: "3rem" }}
           body={checkboxTemplate}
         />
-<Column field="productTitle" header="Product Title" body={pTemplate0} filter={selectedFilterFields.includes("productTitle")} hidden={selectedHideFields?.includes("productTitle")}  sortable style={{ minWidth: "8rem" }} />
-<Column field="description" header="Description" body={inputTextareaTemplate1} filter={selectedFilterFields.includes("description")} hidden={selectedHideFields?.includes("description")}  sortable style={{ minWidth: "8rem" }} />
-<Column field="price" header="Price" body={multiselectTemplate2} filter={selectedFilterFields.includes("price")} hidden={selectedHideFields?.includes("price")}  style={{ minWidth: "8rem" }} />
-<Column field="productImage" header="Product Image" body={imageTemplate3} filter={selectedFilterFields.includes("productImage")} hidden={selectedHideFields?.includes("productImage")}  sortable style={{ minWidth: "8rem" }} />
-<Column field="smallImage" header="Small Image" body={imageTemplate4} filter={selectedFilterFields.includes("smallImage")} hidden={selectedHideFields?.includes("smallImage")}  sortable style={{ minWidth: "8rem" }} />
-            <Column header="Edit" body={editTemplate} />
-            <Column header="Delete" body={deleteTemplate} />
-            
-        </DataTable>
-
+        <Column
+          field="productTitle"
+          header="Product Title"
+          body={pTemplate0}
+          filter={selectedFilterFields.includes("productTitle")}
+          hidden={selectedHideFields?.includes("productTitle")}
+          sortable
+          style={{ minWidth: "8rem" }}
+        />
+        <Column
+          field="description"
+          header="Description"
+          body={inputTextareaTemplate1}
+          filter={selectedFilterFields.includes("description")}
+          hidden={selectedHideFields?.includes("description")}
+          sortable
+          style={{ minWidth: "8rem" }}
+        />
+        <Column
+          field="price"
+          header="Price"
+          body={multiselectTemplate2}
+          filter={selectedFilterFields.includes("price")}
+          hidden={selectedHideFields?.includes("price")}
+          style={{ minWidth: "8rem" }}
+        />
+        <Column
+          field="productImage"
+          header="Product Image"
+          body={imageTemplate3}
+          filter={selectedFilterFields.includes("productImage")}
+          hidden={selectedHideFields?.includes("productImage")}
+          sortable
+          style={{ minWidth: "8rem" }}
+        />
+        <Column
+          field="smallImage"
+          header="Small Image"
+          body={imageTemplate4}
+          filter={selectedFilterFields.includes("smallImage")}
+          hidden={selectedHideFields?.includes("smallImage")}
+          sortable
+          style={{ minWidth: "8rem" }}
+        />
+        <Column header="Edit" body={editTemplate} />
+        <Column header="Delete" body={deleteTemplate} />
+      </DataTable>
 
       {selectedItems.length > 0 ? (
         <div
@@ -325,19 +411,27 @@ const imageTemplate4 = (rowData, { rowIndex }) => <Image src={rowData.smallImage
         </div>
       ) : null}
 
-
-        <Dialog header="Upload Product Data" visible={showUpload} onHide={() => setShowUpload(false)}>
-        <UploadService 
-          user={user} 
-          serviceName="product"            
+      <Dialog
+        header="Upload Product Data"
+        visible={showUpload}
+        onHide={() => setShowUpload(false)}
+      >
+        <UploadService
+          user={user}
+          serviceName="product"
           onUploadComplete={() => {
             setShowUpload(false); // Close the dialog after upload
-          }}/>
+          }}
+        />
       </Dialog>
 
-      <Dialog header="Search Product" visible={searchDialog} onHide={() => setSearchDialog(false)}>
-      Search
-    </Dialog>
+      <Dialog
+        header="Search Product"
+        visible={searchDialog}
+        onHide={() => setSearchDialog(false)}
+      >
+        Search
+      </Dialog>
       <Dialog
         header="Hide Columns"
         visible={showColumns}
@@ -363,12 +457,12 @@ const imageTemplate4 = (rowData, { rowIndex }) => <Image src={rowData.smallImage
             console.log(selectedHideFields);
             onClickSaveHiddenfields(selectedHideFields);
             setSelectedHideFields(selectedHideFields);
-            setShowColumns(false)
+            setShowColumns(false);
           }}
         ></Button>
       </Dialog>
-        </>
-    );
+    </>
+  );
 };
 
 export default ProductDataTable;

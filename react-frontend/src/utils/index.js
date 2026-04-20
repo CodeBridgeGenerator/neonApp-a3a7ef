@@ -97,7 +97,7 @@ export const deleteMany = async (params) => {
     }
 };
 
-export const excludeLocations = ['/settings', '/account', '/', '/login-faq', '/signup', '/login', '/login-faq', /^\/reset\/[a-f0-9]{24}$/];
+export const excludeLocations = ['/settings','/Homepage', '/account', '/', '/login-faq', '/signup', '/login', '/login-faq', /^\/reset\/[a-f0-9]{24}$/];
 
 export default {
     requestOptions,

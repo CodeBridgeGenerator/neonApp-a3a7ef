@@ -20,13 +20,7 @@
   "stack": [
     {
       "appName": "nodejs-backend",
-      "environments": [
-        null,
-        null,
-        null,
-        null,
-        null
-      ],
+      "environments": [null, null, null, null, null],
       "pathToLogo": {
         "s": "/assets/applications_logos/nodejs-s.png",
         "l": "/assets/applications_logos/nodejs.png"
@@ -38,13 +32,7 @@
     },
     {
       "appName": "react-frontend",
-      "environments": [
-        null,
-        null,
-        null,
-        null,
-        null
-      ],
+      "environments": [null, null, null, null, null],
       "pathToLogo": {
         "s": "/assets/applications_logos/react-s.png",
         "l": "/assets/applications_logos/react.png"
@@ -109,9 +97,7 @@
           "reverse": false,
           "morph": false,
           "through": false,
-          "args": [
-            "8"
-          ],
+          "args": ["8"],
           "auditing": true,
           "warehousing": true,
           "searchable": false,
@@ -127,9 +113,7 @@
         {
           "fieldName": "gender",
           "type": "String",
-          "enumValues": [
-            "[\"Male\",\"Female\"]"
-          ],
+          "enumValues": ["[\"Male\",\"Female\"]"],
           "setValues": [],
           "jsonSchema": null,
           "colWidth": 6,
@@ -421,9 +405,7 @@
           "reverse": false,
           "morph": false,
           "through": false,
-          "args": [
-            "8"
-          ],
+          "args": ["8"],
           "auditing": true,
           "warehousing": true,
           "searchable": false,
@@ -934,9 +916,7 @@
           "reverse": false,
           "morph": false,
           "through": false,
-          "args": [
-            "8"
-          ],
+          "args": ["8"],
           "auditing": true,
           "warehousing": true,
           "searchable": false,
@@ -2169,9 +2149,7 @@
           "reverse": false,
           "morph": false,
           "through": false,
-          "args": [
-            "8"
-          ],
+          "args": ["8"],
           "auditing": true,
           "warehousing": true,
           "searchable": false,
@@ -2321,10 +2299,7 @@
             "refServiceName": "product",
             "refDatabaseName": "product",
             "relationshipType": "one-to-many",
-            "identifierFieldName": [
-              "productTitle",
-              "description"
-            ]
+            "identifierFieldName": ["productTitle", "description"]
           }
         },
         {
@@ -2371,11 +2346,7 @@
             "refServiceName": "productColor",
             "refDatabaseName": "product_color",
             "relationshipType": "one-to-many",
-            "identifierFieldName": [
-              "colorName",
-              "colorCode",
-              "colorImage"
-            ]
+            "identifierFieldName": ["colorName", "colorCode", "colorImage"]
           }
         },
         {
@@ -2848,9 +2819,7 @@
           "fieldName": "gender",
           "type": "String",
           "enumValues": [],
-          "setValues": [
-            "[\"Male\",\"Female\"]"
-          ],
+          "setValues": ["[\"Male\",\"Female\"]"],
           "jsonSchema": null,
           "colWidth": 6,
           "protected": false,
@@ -3564,9 +3533,7 @@
           "reverse": false,
           "morph": false,
           "through": false,
-          "args": [
-            "8"
-          ],
+          "args": ["8"],
           "auditing": true,
           "warehousing": true,
           "searchable": false,
@@ -3672,10 +3639,7 @@
             "refServiceName": "order",
             "refDatabaseName": "order",
             "relationshipType": "one-to-one",
-            "identifierFieldName": [
-              "customerName",
-              "total"
-            ]
+            "identifierFieldName": ["customerName", "total"]
           }
         },
         {
@@ -3722,10 +3686,7 @@
             "refServiceName": "product",
             "refDatabaseName": "product",
             "relationshipType": "one-to-many",
-            "identifierFieldName": [
-              "productTitle",
-              "productImage"
-            ]
+            "identifierFieldName": ["productTitle", "productImage"]
           }
         },
         {
@@ -4222,9 +4183,7 @@
           "reverse": false,
           "morph": false,
           "through": false,
-          "args": [
-            "8"
-          ],
+          "args": ["8"],
           "auditing": true,
           "warehousing": true,
           "searchable": false,
@@ -4685,9 +4644,7 @@
           "reverse": false,
           "morph": false,
           "through": false,
-          "args": [
-            "8"
-          ],
+          "args": ["8"],
           "auditing": true,
           "warehousing": true,
           "searchable": false,
@@ -4751,9 +4708,7 @@
             "refServiceName": "customerEmail",
             "refDatabaseName": "customer_email",
             "relationshipType": "one-to-one",
-            "identifierFieldName": [
-              "email"
-            ]
+            "identifierFieldName": ["email"]
           }
         },
         {

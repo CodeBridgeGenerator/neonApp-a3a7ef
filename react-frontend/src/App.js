@@ -10,6 +10,11 @@ import MainLayout from './components/Layouts/MainLayout';
 import LoadingWrapper from './MyRouter/wrappers/LoadingWrapper';
 import ToastWrapper from './MyRouter/wrappers/ToastWrapper';
 import StartupWrapper from './MyRouter/wrappers/StartupWrapper';
+import Homepage from './components/app_components/Homepage/Homepage';
+import CategoryPage from './components/app_components/CategoryPage/CategoryPage';
+import ProductPage from './components/app_components/ProductPage/ProductPage';
+import OrderPage from './components/app_components/OrderPage/OrderPage';
+import CheckoutPage from './components/app_components/CheckoutPage/CheckoutPage';
 
 import 'primereact/resources/themes/lara-light-cyan/theme.css';
 import 'primereact/resources/primereact.css';

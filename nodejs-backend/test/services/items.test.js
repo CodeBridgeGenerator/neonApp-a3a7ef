@@ -15,10 +15,67 @@ describe("items service", async () => {
   let usersServiceResults;
   let users;
 
-  const customerDetailsCreated = await app.service("customerDetails").Model.create({"order":"parentObjectId","customerName":"new value","customerEmail":"new value","customerAddress":"new value","phoneNumber":"new value","gender":"new value","dateOfBirth":"2026-04-17T02:57:11.984Z"});
-const orderCreated = await app.service("order").Model.create({"order":"parentObjectId","customerName":`${customerDetailsCreated._id}`,"customerEmail":"new value","customerAddress":"new value","phoneNumber":"new value","gender":"new value","dateOfBirth":"2026-04-17T02:57:11.984Z","total":"new value"});
-const productPriceCreated = await app.service("productPrice").Model.create({"order":`${orderCreated._id}`,"customerName":`${customerDetailsCreated._id}`,"customerEmail":"new value","customerAddress":"new value","phoneNumber":"new value","gender":"new value","dateOfBirth":"2026-04-17T02:57:11.984Z","total":"new value","product":"parentObjectId","productTitle":"new value","description":"new value","price":"parentObjectId","productName":"new value","basePrice":23,"currency":23,"discountedPrice":"new value","taxPercentage":"new value"});
-const productCreated = await app.service("product").Model.create({"order":`${orderCreated._id}`,"customerName":`${customerDetailsCreated._id}`,"customerEmail":"new value","customerAddress":"new value","phoneNumber":"new value","gender":"new value","dateOfBirth":"2026-04-17T02:57:11.984Z","total":"new value","product":"parentObjectId","productTitle":"new value","description":"new value","price":`${productPriceCreated._id}`,"productName":"new value","basePrice":23,"currency":23,"discountedPrice":"new value","taxPercentage":"new value","productImage":"new value","smallImage":"new value"});
+  const customerDetailsCreated = await app
+    .service("customerDetails")
+    .Model.create({
+      order: "parentObjectId",
+      customerName: "new value",
+      customerEmail: "new value",
+      customerAddress: "new value",
+      phoneNumber: "new value",
+      gender: "new value",
+      dateOfBirth: "2026-04-17T02:57:11.984Z",
+    });
+  const orderCreated = await app.service("order").Model.create({
+    order: "parentObjectId",
+    customerName: `${customerDetailsCreated._id}`,
+    customerEmail: "new value",
+    customerAddress: "new value",
+    phoneNumber: "new value",
+    gender: "new value",
+    dateOfBirth: "2026-04-17T02:57:11.984Z",
+    total: "new value",
+  });
+  const productPriceCreated = await app.service("productPrice").Model.create({
+    order: `${orderCreated._id}`,
+    customerName: `${customerDetailsCreated._id}`,
+    customerEmail: "new value",
+    customerAddress: "new value",
+    phoneNumber: "new value",
+    gender: "new value",
+    dateOfBirth: "2026-04-17T02:57:11.984Z",
+    total: "new value",
+    product: "parentObjectId",
+    productTitle: "new value",
+    description: "new value",
+    price: "parentObjectId",
+    productName: "new value",
+    basePrice: 23,
+    currency: 23,
+    discountedPrice: "new value",
+    taxPercentage: "new value",
+  });
+  const productCreated = await app.service("product").Model.create({
+    order: `${orderCreated._id}`,
+    customerName: `${customerDetailsCreated._id}`,
+    customerEmail: "new value",
+    customerAddress: "new value",
+    phoneNumber: "new value",
+    gender: "new value",
+    dateOfBirth: "2026-04-17T02:57:11.984Z",
+    total: "new value",
+    product: "parentObjectId",
+    productTitle: "new value",
+    description: "new value",
+    price: `${productPriceCreated._id}`,
+    productName: "new value",
+    basePrice: 23,
+    currency: 23,
+    discountedPrice: "new value",
+    taxPercentage: "new value",
+    productImage: "new value",
+    smallImage: "new value",
+  });
 
   beforeEach(async () => {
     thisService = await app.service("items");
@@ -35,8 +92,8 @@ const productCreated = await app.service("product").Model.create({"order":`${ord
     if (usersServiceResults) {
       await Promise.all(
         usersServiceResults.map((i) =>
-          app.service("users").Model.findByIdAndDelete(i._id)
-        )
+          app.service("users").Model.findByIdAndDelete(i._id),
+        ),
       );
     }
   });
@@ -46,18 +103,47 @@ const productCreated = await app.service("product").Model.create({"order":`${ord
   });
 
   describe("#create", () => {
-    const options = {"order":`${orderCreated._id}`,"customerName":`${customerDetailsCreated._id}`,"customerEmail":"new value","customerAddress":"new value","phoneNumber":"new value","gender":"new value","dateOfBirth":"2026-04-17T02:57:11.984Z","total":"new value","product":`${productCreated._id}`,"productTitle":"new value","description":"new value","price":`${productPriceCreated._id}`,"productName":"new value","basePrice":23,"currency":23,"discountedPrice":"new value","taxPercentage":"new value","productImage":"new value","smallImage":"new value","quantity":23,"productPrice":23,"amount":23};
+    const options = {
+      order: `${orderCreated._id}`,
+      customerName: `${customerDetailsCreated._id}`,
+      customerEmail: "new value",
+      customerAddress: "new value",
+      phoneNumber: "new value",
+      gender: "new value",
+      dateOfBirth: "2026-04-17T02:57:11.984Z",
+      total: "new value",
+      product: `${productCreated._id}`,
+      productTitle: "new value",
+      description: "new value",
+      price: `${productPriceCreated._id}`,
+      productName: "new value",
+      basePrice: 23,
+      currency: 23,
+      discountedPrice: "new value",
+      taxPercentage: "new value",
+      productImage: "new value",
+      smallImage: "new value",
+      quantity: 23,
+      productPrice: 23,
+      amount: 23,
+    };
 
     beforeEach(async () => {
-      itemCreated = await thisService.Model.create({...options, ...users});
+      itemCreated = await thisService.Model.create({ ...options, ...users });
     });
 
     it("should create a new item", () => {
-      assert.strictEqual(itemCreated.order.toString(), options.order.toString());
-assert.strictEqual(itemCreated.product.toString(), options.product.toString());
-assert.strictEqual(itemCreated.quantity, options.quantity);
-assert.strictEqual(itemCreated.productPrice, options.productPrice);
-assert.strictEqual(itemCreated.amount, options.amount);
+      assert.strictEqual(
+        itemCreated.order.toString(),
+        options.order.toString(),
+      );
+      assert.strictEqual(
+        itemCreated.product.toString(),
+        options.product.toString(),
+      );
+      assert.strictEqual(itemCreated.quantity, options.quantity);
+      assert.strictEqual(itemCreated.productPrice, options.productPrice);
+      assert.strictEqual(itemCreated.amount, options.amount);
     });
   });
 
@@ -69,19 +155,31 @@ assert.strictEqual(itemCreated.amount, options.amount);
   });
 
   describe("#update", () => {
-    const options = {"order":`${orderCreated._id}`,"product":`${productCreated._id}`,"quantity":100,"productPrice":100,"amount":100};
+    const options = {
+      order: `${orderCreated._id}`,
+      product: `${productCreated._id}`,
+      quantity: 100,
+      productPrice: 100,
+      amount: 100,
+    };
 
     it("should update an existing item ", async () => {
       const itemUpdated = await thisService.Model.findByIdAndUpdate(
-        itemCreated._id, 
-        options, 
-        { new: true } // Ensure it returns the updated doc
+        itemCreated._id,
+        options,
+        { new: true }, // Ensure it returns the updated doc
       );
-      assert.strictEqual(itemUpdated.order.toString(), options.order.toString());
-assert.strictEqual(itemUpdated.product.toString(), options.product.toString());
-assert.strictEqual(itemUpdated.quantity, options.quantity);
-assert.strictEqual(itemUpdated.productPrice, options.productPrice);
-assert.strictEqual(itemUpdated.amount, options.amount);
+      assert.strictEqual(
+        itemUpdated.order.toString(),
+        options.order.toString(),
+      );
+      assert.strictEqual(
+        itemUpdated.product.toString(),
+        options.product.toString(),
+      );
+      assert.strictEqual(itemUpdated.quantity, options.quantity);
+      assert.strictEqual(itemUpdated.productPrice, options.productPrice);
+      assert.strictEqual(itemUpdated.amount, options.amount);
     });
   });
 
@@ -91,13 +189,22 @@ assert.strictEqual(itemUpdated.amount, options.amount);
         .service("users")
         .Model.findByIdAndDelete(usersServiceResults._id);
 
-      await app.service("customerDetails").Model.findByIdAndDelete(customerDetailsCreated._id);
-await app.service("order").Model.findByIdAndDelete(orderCreated._id);
-await app.service("productPrice").Model.findByIdAndDelete(productPriceCreated._id);
-await app.service("product").Model.findByIdAndDelete(productCreated._id);;
+      await app
+        .service("customerDetails")
+        .Model.findByIdAndDelete(customerDetailsCreated._id);
+      await app.service("order").Model.findByIdAndDelete(orderCreated._id);
+      await app
+        .service("productPrice")
+        .Model.findByIdAndDelete(productPriceCreated._id);
+      await app.service("product").Model.findByIdAndDelete(productCreated._id);
 
-      const itemDeleted = await thisService.Model.findByIdAndDelete(itemCreated._id);
-      assert.strictEqual(itemDeleted._id.toString(), itemCreated._id.toString());
+      const itemDeleted = await thisService.Model.findByIdAndDelete(
+        itemCreated._id,
+      );
+      assert.strictEqual(
+        itemDeleted._id.toString(),
+        itemCreated._id.toString(),
+      );
     });
   });
 });

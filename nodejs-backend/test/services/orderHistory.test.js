@@ -15,8 +15,6 @@ describe("orderHistory service", async () => {
   let usersServiceResults;
   let users;
 
-  
-
   beforeEach(async () => {
     thisService = await app.service("orderHistory");
 
@@ -32,8 +30,8 @@ describe("orderHistory service", async () => {
     if (usersServiceResults) {
       await Promise.all(
         usersServiceResults.map((i) =>
-          app.service("users").Model.findByIdAndDelete(i._id)
-        )
+          app.service("users").Model.findByIdAndDelete(i._id),
+        ),
       );
     }
   });
@@ -43,50 +41,86 @@ describe("orderHistory service", async () => {
   });
 
   describe("#create", () => {
-    const options = {"orderNumber":"new value","orderDate":"2026-04-17T02:57:12.009Z","totalAmount":23,"orderStatus":"new value","canReorder":true,"variantLabel":"new value","favourite":true};
+    const options = {
+      orderNumber: "new value",
+      orderDate: "2026-04-17T02:57:12.009Z",
+      totalAmount: 23,
+      orderStatus: "new value",
+      canReorder: true,
+      variantLabel: "new value",
+      favourite: true,
+    };
 
     beforeEach(async () => {
-      orderHistoryCreated = await thisService.Model.create({...options, ...users});
+      orderHistoryCreated = await thisService.Model.create({
+        ...options,
+        ...users,
+      });
     });
 
     it("should create a new orderHistory", () => {
       assert.strictEqual(orderHistoryCreated.orderNumber, options.orderNumber);
-assert.strictEqual(orderHistoryCreated.orderDate.toISOString(), options.orderDate);
-assert.strictEqual(orderHistoryCreated.totalAmount, options.totalAmount);
-assert.strictEqual(orderHistoryCreated.orderStatus, options.orderStatus);
-assert.strictEqual(orderHistoryCreated.canReorder, options.canReorder);
-assert.strictEqual(orderHistoryCreated.canReorder, options.canReorder);
-assert.strictEqual(orderHistoryCreated.variantLabel, options.variantLabel);
-assert.strictEqual(orderHistoryCreated.favourite, options.favourite);
-assert.strictEqual(orderHistoryCreated.favourite, options.favourite);
+      assert.strictEqual(
+        orderHistoryCreated.orderDate.toISOString(),
+        options.orderDate,
+      );
+      assert.strictEqual(orderHistoryCreated.totalAmount, options.totalAmount);
+      assert.strictEqual(orderHistoryCreated.orderStatus, options.orderStatus);
+      assert.strictEqual(orderHistoryCreated.canReorder, options.canReorder);
+      assert.strictEqual(orderHistoryCreated.canReorder, options.canReorder);
+      assert.strictEqual(
+        orderHistoryCreated.variantLabel,
+        options.variantLabel,
+      );
+      assert.strictEqual(orderHistoryCreated.favourite, options.favourite);
+      assert.strictEqual(orderHistoryCreated.favourite, options.favourite);
     });
   });
 
   describe("#get", () => {
     it("should retrieve a orderHistory by ID", async () => {
-      const retrieved = await thisService.Model.findById(orderHistoryCreated._id);
-      assert.strictEqual(retrieved._id.toString(), orderHistoryCreated._id.toString());
+      const retrieved = await thisService.Model.findById(
+        orderHistoryCreated._id,
+      );
+      assert.strictEqual(
+        retrieved._id.toString(),
+        orderHistoryCreated._id.toString(),
+      );
     });
   });
 
   describe("#update", () => {
-    const options = {"orderNumber":"updated value","orderDate":"2026-04-17T02:57:12.009Z","totalAmount":100,"orderStatus":"updated value","canReorder":false,"variantLabel":"updated value","favourite":false};
+    const options = {
+      orderNumber: "updated value",
+      orderDate: "2026-04-17T02:57:12.009Z",
+      totalAmount: 100,
+      orderStatus: "updated value",
+      canReorder: false,
+      variantLabel: "updated value",
+      favourite: false,
+    };
 
     it("should update an existing orderHistory ", async () => {
       const orderHistoryUpdated = await thisService.Model.findByIdAndUpdate(
-        orderHistoryCreated._id, 
-        options, 
-        { new: true } // Ensure it returns the updated doc
+        orderHistoryCreated._id,
+        options,
+        { new: true }, // Ensure it returns the updated doc
       );
       assert.strictEqual(orderHistoryUpdated.orderNumber, options.orderNumber);
-assert.strictEqual(orderHistoryUpdated.orderDate.toISOString(), options.orderDate);
-assert.strictEqual(orderHistoryUpdated.totalAmount, options.totalAmount);
-assert.strictEqual(orderHistoryUpdated.orderStatus, options.orderStatus);
-assert.strictEqual(orderHistoryUpdated.canReorder, options.canReorder);
-assert.strictEqual(orderHistoryUpdated.canReorder, options.canReorder);
-assert.strictEqual(orderHistoryUpdated.variantLabel, options.variantLabel);
-assert.strictEqual(orderHistoryUpdated.favourite, options.favourite);
-assert.strictEqual(orderHistoryUpdated.favourite, options.favourite);
+      assert.strictEqual(
+        orderHistoryUpdated.orderDate.toISOString(),
+        options.orderDate,
+      );
+      assert.strictEqual(orderHistoryUpdated.totalAmount, options.totalAmount);
+      assert.strictEqual(orderHistoryUpdated.orderStatus, options.orderStatus);
+      assert.strictEqual(orderHistoryUpdated.canReorder, options.canReorder);
+      assert.strictEqual(orderHistoryUpdated.canReorder, options.canReorder);
+      assert.strictEqual(
+        orderHistoryUpdated.variantLabel,
+        options.variantLabel,
+      );
+      assert.strictEqual(orderHistoryUpdated.favourite, options.favourite);
+      assert.strictEqual(orderHistoryUpdated.favourite, options.favourite);
     });
   });
 
@@ -96,10 +130,13 @@ assert.strictEqual(orderHistoryUpdated.favourite, options.favourite);
         .service("users")
         .Model.findByIdAndDelete(usersServiceResults._id);
 
-      ;
-
-      const orderHistoryDeleted = await thisService.Model.findByIdAndDelete(orderHistoryCreated._id);
-      assert.strictEqual(orderHistoryDeleted._id.toString(), orderHistoryCreated._id.toString());
+      const orderHistoryDeleted = await thisService.Model.findByIdAndDelete(
+        orderHistoryCreated._id,
+      );
+      assert.strictEqual(
+        orderHistoryDeleted._id.toString(),
+        orderHistoryCreated._id.toString(),
+      );
     });
   });
 });

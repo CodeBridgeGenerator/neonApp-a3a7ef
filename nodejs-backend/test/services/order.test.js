@@ -15,7 +15,16 @@ describe("order service", async () => {
   let usersServiceResults;
   let users;
 
-  const customerDetailsCreated = await app.service("customerDetails").Model.create({"customerName":"new value","customerEmail":"new value","customerAddress":"new value","phoneNumber":"new value","gender":"new value","dateOfBirth":"2026-04-17T02:57:11.973Z"});
+  const customerDetailsCreated = await app
+    .service("customerDetails")
+    .Model.create({
+      customerName: "new value",
+      customerEmail: "new value",
+      customerAddress: "new value",
+      phoneNumber: "new value",
+      gender: "new value",
+      dateOfBirth: "2026-04-17T02:57:11.973Z",
+    });
 
   beforeEach(async () => {
     thisService = await app.service("order");
@@ -32,8 +41,8 @@ describe("order service", async () => {
     if (usersServiceResults) {
       await Promise.all(
         usersServiceResults.map((i) =>
-          app.service("users").Model.findByIdAndDelete(i._id)
-        )
+          app.service("users").Model.findByIdAndDelete(i._id),
+        ),
       );
     }
   });
@@ -43,15 +52,26 @@ describe("order service", async () => {
   });
 
   describe("#create", () => {
-    const options = {"customerName":`${customerDetailsCreated._id}`,"customerEmail":"new value","customerAddress":"new value","phoneNumber":"new value","gender":"new value","dateOfBirth":"2026-04-17T02:57:11.973Z","total":"new value"};
+    const options = {
+      customerName: `${customerDetailsCreated._id}`,
+      customerEmail: "new value",
+      customerAddress: "new value",
+      phoneNumber: "new value",
+      gender: "new value",
+      dateOfBirth: "2026-04-17T02:57:11.973Z",
+      total: "new value",
+    };
 
     beforeEach(async () => {
-      orderCreated = await thisService.Model.create({...options, ...users});
+      orderCreated = await thisService.Model.create({ ...options, ...users });
     });
 
     it("should create a new order", () => {
-      assert.strictEqual(orderCreated.customerName.toString(), options.customerName.toString());
-assert.strictEqual(orderCreated.total, options.total);
+      assert.strictEqual(
+        orderCreated.customerName.toString(),
+        options.customerName.toString(),
+      );
+      assert.strictEqual(orderCreated.total, options.total);
     });
   });
 
@@ -63,16 +83,22 @@ assert.strictEqual(orderCreated.total, options.total);
   });
 
   describe("#update", () => {
-    const options = {"customerName":`${customerDetailsCreated._id}`,"total":"updated value"};
+    const options = {
+      customerName: `${customerDetailsCreated._id}`,
+      total: "updated value",
+    };
 
     it("should update an existing order ", async () => {
       const orderUpdated = await thisService.Model.findByIdAndUpdate(
-        orderCreated._id, 
-        options, 
-        { new: true } // Ensure it returns the updated doc
+        orderCreated._id,
+        options,
+        { new: true }, // Ensure it returns the updated doc
       );
-      assert.strictEqual(orderUpdated.customerName.toString(), options.customerName.toString());
-assert.strictEqual(orderUpdated.total, options.total);
+      assert.strictEqual(
+        orderUpdated.customerName.toString(),
+        options.customerName.toString(),
+      );
+      assert.strictEqual(orderUpdated.total, options.total);
     });
   });
 
@@ -82,10 +108,17 @@ assert.strictEqual(orderUpdated.total, options.total);
         .service("users")
         .Model.findByIdAndDelete(usersServiceResults._id);
 
-      await app.service("customerDetails").Model.findByIdAndDelete(customerDetailsCreated._id);;
+      await app
+        .service("customerDetails")
+        .Model.findByIdAndDelete(customerDetailsCreated._id);
 
-      const orderDeleted = await thisService.Model.findByIdAndDelete(orderCreated._id);
-      assert.strictEqual(orderDeleted._id.toString(), orderCreated._id.toString());
+      const orderDeleted = await thisService.Model.findByIdAndDelete(
+        orderCreated._id,
+      );
+      assert.strictEqual(
+        orderDeleted._id.toString(),
+        orderCreated._id.toString(),
+      );
     });
   });
 });

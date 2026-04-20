@@ -9,45 +9,52 @@ import client from "../../../services/restClient";
 import CommentsSection from "../../common/CommentsSection";
 import ProjectLayout from "../../Layouts/ProjectLayout";
 
-import { InputNumber } from 'primereact/inputnumber';
+import { InputNumber } from "primereact/inputnumber";
 
 const SingleOrderHistoryPage = (props) => {
-    const navigate = useNavigate();
-    const urlParams = useParams();
-    const [_entity, set_entity] = useState({});
+  const navigate = useNavigate();
+  const urlParams = useParams();
+  const [_entity, set_entity] = useState({});
   const [isHelpSidebarVisible, setHelpSidebarVisible] = useState(false);
 
-    
+  useEffect(() => {
+    //on mount
+    client
+      .service("orderHistory")
+      .get(urlParams.singleOrderHistoryId, {
+        query: {
+          $populate: [
+            {
+              path: "createdBy",
+              service: "users",
+              select: ["name"],
+            },
+            {
+              path: "updatedBy",
+              service: "users",
+              select: ["name"],
+            },
+          ],
+        },
+      })
+      .then((res) => {
+        set_entity(res || {});
+      })
+      .catch((error) => {
+        console.log({ error });
+        props.alert({
+          title: "OrderHistory",
+          type: "error",
+          message: error.message || "Failed get orderHistory",
+        });
+      });
+  }, [props, urlParams.singleOrderHistoryId]);
 
-    useEffect(() => {
-        //on mount
-        client
-            .service("orderHistory")
-            .get(urlParams.singleOrderHistoryId, { query: { $populate: [            {
-                path: "createdBy",
-                service: "users",
-                select: ["name"],
-              },{
-                path: "updatedBy",
-                service: "users",
-                select: ["name"],
-              },] }})
-            .then((res) => {
-                set_entity(res || {});
-                
-            })
-            .catch((error) => {
-                console.log({ error });
-                props.alert({ title: "OrderHistory", type: "error", message: error.message || "Failed get orderHistory" });
-            });
-    }, [props,urlParams.singleOrderHistoryId]);
+  const goBack = () => {
+    navigate("/app/orderHistory");
+  };
 
-
-    const goBack = () => {
-        navigate("/app/orderHistory");
-    };
-
-      const toggleHelpSidebar = () => {
+  const toggleHelpSidebar = () => {
     setHelpSidebarVisible(!isHelpSidebarVisible);
   };
 
@@ -73,86 +80,125 @@ const SingleOrderHistoryPage = (props) => {
       });
   };
 
-    const menuItems = [
-        {
-            label: "Copy link",
-            icon: "pi pi-copy",
-            command: () => copyPageLink(),
-        },
-        {
-            label: "Help",
-            icon: "pi pi-question-circle",
-            command: () => toggleHelpSidebar(),
-        },
-    ];
+  const menuItems = [
+    {
+      label: "Copy link",
+      icon: "pi pi-copy",
+      command: () => copyPageLink(),
+    },
+    {
+      label: "Help",
+      icon: "pi pi-question-circle",
+      command: () => toggleHelpSidebar(),
+    },
+  ];
 
-    return (
-        <ProjectLayout>
-        <div className="col-12 flex flex-column align-items-center">
-            <div className="col-12">
-                <div className="flex align-items-center justify-content-between">
-                <div className="flex align-items-center">
-                    <Button className="p-button-text" icon="pi pi-chevron-left" onClick={() => goBack()} />
-                    <h3 className="m-0">Order History</h3>
-                    <SplitButton
-                        model={menuItems.filter(
-                        (m) => !(m.icon === "pi pi-trash" && items?.length === 0),
-                        )}
-                        dropdownIcon="pi pi-ellipsis-h"
-                        buttonClassName="hidden"
-                        menuButtonClassName="ml-1 p-button-text"
-                    />
-                </div>
-                
-                {/* <p>orderHistory/{urlParams.singleOrderHistoryId}</p> */}
+  return (
+    <ProjectLayout>
+      <div className="col-12 flex flex-column align-items-center">
+        <div className="col-12">
+          <div className="flex align-items-center justify-content-between">
+            <div className="flex align-items-center">
+              <Button
+                className="p-button-text"
+                icon="pi pi-chevron-left"
+                onClick={() => goBack()}
+              />
+              <h3 className="m-0">Order History</h3>
+              <SplitButton
+                model={menuItems.filter(
+                  (m) => !(m.icon === "pi pi-trash" && items?.length === 0),
+                )}
+                dropdownIcon="pi pi-ellipsis-h"
+                buttonClassName="hidden"
+                menuButtonClassName="ml-1 p-button-text"
+              />
             </div>
-            <div className="card w-full">
-                <div className="grid ">
 
-            <div className="col-12 md:col-6 lg:col-3"><label className="text-sm text-gray-600">Order Number</label><p className="m-0 ml-3" >{_entity?.orderNumber}</p></div>
-<div className="col-12 md:col-6 lg:col-3"><label className="text-sm text-gray-600">Total Amount</label><p className="m-0 ml-3" ><InputNumber id="totalAmount" value={Number(_entity?.totalAmount)} mode="currency" currency="MYR" locale="en-US"   disabled={true} /></p></div>
-<div className="col-12 md:col-6 lg:col-3"><label className="text-sm text-gray-600">Order Status</label><p className="m-0 ml-3" >{_entity?.orderStatus}</p></div>
-<div className="col-12 md:col-6 lg:col-3"><label className="text-sm text-gray-600">Can Reorder</label><p className="m-0" ><i id="canReorder" className={`pi ${_entity?.canReorder?"pi-check": "pi-times"}`}  ></i></p></div>
-<div className="col-12 md:col-6 lg:col-3"><label className="text-sm text-gray-600">Variant Label</label><p className="m-0 ml-3" >{_entity?.variantLabel}</p></div>
-<div className="col-12 md:col-6 lg:col-3"><label className="text-sm text-gray-600">Favourite</label><p className="m-0" ><i id="favourite" className={`pi ${_entity?.favourite?"pi-check": "pi-times"}`}  ></i></p></div>
-            
+            {/* <p>orderHistory/{urlParams.singleOrderHistoryId}</p> */}
+          </div>
+          <div className="card w-full">
+            <div className="grid ">
+              <div className="col-12 md:col-6 lg:col-3">
+                <label className="text-sm text-gray-600">Order Number</label>
+                <p className="m-0 ml-3">{_entity?.orderNumber}</p>
+              </div>
+              <div className="col-12 md:col-6 lg:col-3">
+                <label className="text-sm text-gray-600">Total Amount</label>
+                <p className="m-0 ml-3">
+                  <InputNumber
+                    id="totalAmount"
+                    value={Number(_entity?.totalAmount)}
+                    mode="currency"
+                    currency="MYR"
+                    locale="en-US"
+                    disabled={true}
+                  />
+                </p>
+              </div>
+              <div className="col-12 md:col-6 lg:col-3">
+                <label className="text-sm text-gray-600">Order Status</label>
+                <p className="m-0 ml-3">{_entity?.orderStatus}</p>
+              </div>
+              <div className="col-12 md:col-6 lg:col-3">
+                <label className="text-sm text-gray-600">Can Reorder</label>
+                <p className="m-0">
+                  <i
+                    id="canReorder"
+                    className={`pi ${_entity?.canReorder ? "pi-check" : "pi-times"}`}
+                  ></i>
+                </p>
+              </div>
+              <div className="col-12 md:col-6 lg:col-3">
+                <label className="text-sm text-gray-600">Variant Label</label>
+                <p className="m-0 ml-3">{_entity?.variantLabel}</p>
+              </div>
+              <div className="col-12 md:col-6 lg:col-3">
+                <label className="text-sm text-gray-600">Favourite</label>
+                <p className="m-0">
+                  <i
+                    id="favourite"
+                    className={`pi ${_entity?.favourite ? "pi-check" : "pi-times"}`}
+                  ></i>
+                </p>
+              </div>
 
-                    <div className="col-12">&nbsp;</div>
-                </div>
+              <div className="col-12">&nbsp;</div>
             </div>
-         </div>
+          </div>
+        </div>
 
-      
-
-
-      <CommentsSection
-        recordId={urlParams.singleOrderHistoryId}
-        user={props.user}
-        alert={props.alert}
-        serviceName="orderHistory"
-      />
-      <div
-        id="rightsidebar"
-        className={classNames("overlay-auto z-1 surface-overlay shadow-2 absolute right-0 w-20rem animation-duration-150 animation-ease-in-out", { "hidden" : !isHelpSidebarVisible })}
-        style={{ top: "60px", height: "calc(100% - 60px)" }}
-      >
-        <div className="flex flex-column h-full p-4">
-          <span className="text-xl font-medium text-900 mb-3">Help bar</span>
-          <div className="border-2 border-dashed surface-border border-round surface-section flex-auto"></div>
+        <CommentsSection
+          recordId={urlParams.singleOrderHistoryId}
+          user={props.user}
+          alert={props.alert}
+          serviceName="orderHistory"
+        />
+        <div
+          id="rightsidebar"
+          className={classNames(
+            "overlay-auto z-1 surface-overlay shadow-2 absolute right-0 w-20rem animation-duration-150 animation-ease-in-out",
+            { hidden: !isHelpSidebarVisible },
+          )}
+          style={{ top: "60px", height: "calc(100% - 60px)" }}
+        >
+          <div className="flex flex-column h-full p-4">
+            <span className="text-xl font-medium text-900 mb-3">Help bar</span>
+            <div className="border-2 border-dashed surface-border border-round surface-section flex-auto"></div>
+          </div>
         </div>
       </div>
-      </div>
-        </ProjectLayout>
-    );
+    </ProjectLayout>
+  );
 };
 
 const mapState = (state) => {
-    const { user, isLoggedIn } = state.auth;
-    return { user, isLoggedIn };
+  const { user, isLoggedIn } = state.auth;
+  return { user, isLoggedIn };
 };
 
 const mapDispatch = (dispatch) => ({
-    alert: (data) => dispatch.toast.alert(data),
+  alert: (data) => dispatch.toast.alert(data),
 });
 
 export default connect(mapState, mapDispatch)(SingleOrderHistoryPage);

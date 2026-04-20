@@ -1,13 +1,13 @@
-import { Column } from 'primereact/column';
-import { DataTable } from 'primereact/datatable';
-import React, { useState, useRef, useEffect} from 'react';
-import _ from 'lodash';
-import { Button } from 'primereact/button';
-import { InputNumber } from 'primereact/inputnumber';
+import { Column } from "primereact/column";
+import { DataTable } from "primereact/datatable";
+import React, { useState, useRef, useEffect } from "react";
+import _ from "lodash";
+import { Button } from "primereact/button";
+import { InputNumber } from "primereact/inputnumber";
 import { useParams } from "react-router-dom";
 import moment from "moment";
 import UploadService from "../../../services/UploadService";
-import { InputText } from 'primereact/inputtext';
+import { InputText } from "primereact/inputtext";
 import { Dialog } from "primereact/dialog";
 import { MultiSelect } from "primereact/multiselect";
 import DownloadCSV from "../../../utils/DownloadCSV";
@@ -19,15 +19,35 @@ import DuplicateIcon from "../../../assets/media/Duplicate.png";
 import DeleteIcon from "../../../assets/media/Trash.png";
 import { Checkbox } from "primereact/checkbox";
 
-const OrderHistoryDataTable = ({ items, fields, onEditRow, onRowDelete, onRowClick, searchDialog, setSearchDialog,   showUpload, setShowUpload,
-    showFilter, setShowFilter,
-    showColumns, setShowColumns, onClickSaveFilteredfields ,
-    selectedFilterFields, setSelectedFilterFields,
-    selectedHideFields, setSelectedHideFields, onClickSaveHiddenfields, loading, user,   selectedDelete,
-  setSelectedDelete, onCreateResult}) => {
-    const dt = useRef(null);
-    const urlParams = useParams();
-    const [globalFilter, setGlobalFilter] = useState('');
+const OrderHistoryDataTable = ({
+  items,
+  fields,
+  onEditRow,
+  onRowDelete,
+  onRowClick,
+  searchDialog,
+  setSearchDialog,
+  showUpload,
+  setShowUpload,
+  showFilter,
+  setShowFilter,
+  showColumns,
+  setShowColumns,
+  onClickSaveFilteredfields,
+  selectedFilterFields,
+  setSelectedFilterFields,
+  selectedHideFields,
+  setSelectedHideFields,
+  onClickSaveHiddenfields,
+  loading,
+  user,
+  selectedDelete,
+  setSelectedDelete,
+  onCreateResult,
+}) => {
+  const dt = useRef(null);
+  const urlParams = useParams();
+  const [globalFilter, setGlobalFilter] = useState("");
   const [selectedItems, setSelectedItems] = useState([]);
   const [showDialog, setShowDialog] = useState(false);
   const [data, setData] = useState([]);
@@ -53,17 +73,44 @@ const OrderHistoryDataTable = ({ items, fields, onEditRow, onRowDelete, onRowCli
     </div>
   );
 
-const pTemplate0 = (rowData, { rowIndex }) => <p >{rowData.orderNumber}</p>
-const p_dateTemplate1 = (rowData, { rowIndex }) => <p >{moment(rowData.orderDate).fromNow()}</p>
-const currencyTemplate2 = (rowData, { rowIndex }) => <InputNumber value={rowData.totalAmount}  mode="currency" currency="MYR" locale="en-US" disabled={true} useGrouping={false} />
-const pTemplate3 = (rowData, { rowIndex }) => <p >{rowData.orderStatus}</p>
-const p_booleanTemplate4 = (rowData, { rowIndex }) => <p >{String(rowData.canReorder)}</p>
-const pTemplate5 = (rowData, { rowIndex }) => <p >{rowData.variantLabel}</p>
-const p_booleanTemplate6 = (rowData, { rowIndex }) => <p >{String(rowData.favourite)}</p>
-    const editTemplate = (rowData, { rowIndex }) => <Button onClick={() => onEditRow(rowData, rowIndex)} icon={`pi ${rowData.isEdit ? "pi-check" : "pi-pencil"}`} className={`p-button-rounded p-button-text ${rowData.isEdit ? "p-button-success" : "p-button-warning"}`} />;
-    const deleteTemplate = (rowData, { rowIndex }) => <Button onClick={() => onRowDelete(rowData._id)} icon="pi pi-times" className="p-button-rounded p-button-danger p-button-text" />;
-    
-      const checkboxTemplate = (rowData) => (
+  const pTemplate0 = (rowData, { rowIndex }) => <p>{rowData.orderNumber}</p>;
+  const p_dateTemplate1 = (rowData, { rowIndex }) => (
+    <p>{moment(rowData.orderDate).fromNow()}</p>
+  );
+  const currencyTemplate2 = (rowData, { rowIndex }) => (
+    <InputNumber
+      value={rowData.totalAmount}
+      mode="currency"
+      currency="MYR"
+      locale="en-US"
+      disabled={true}
+      useGrouping={false}
+    />
+  );
+  const pTemplate3 = (rowData, { rowIndex }) => <p>{rowData.orderStatus}</p>;
+  const p_booleanTemplate4 = (rowData, { rowIndex }) => (
+    <p>{String(rowData.canReorder)}</p>
+  );
+  const pTemplate5 = (rowData, { rowIndex }) => <p>{rowData.variantLabel}</p>;
+  const p_booleanTemplate6 = (rowData, { rowIndex }) => (
+    <p>{String(rowData.favourite)}</p>
+  );
+  const editTemplate = (rowData, { rowIndex }) => (
+    <Button
+      onClick={() => onEditRow(rowData, rowIndex)}
+      icon={`pi ${rowData.isEdit ? "pi-check" : "pi-pencil"}`}
+      className={`p-button-rounded p-button-text ${rowData.isEdit ? "p-button-success" : "p-button-warning"}`}
+    />
+  );
+  const deleteTemplate = (rowData, { rowIndex }) => (
+    <Button
+      onClick={() => onRowDelete(rowData._id)}
+      icon="pi pi-times"
+      className="p-button-rounded p-button-danger p-button-text"
+    />
+  );
+
+  const checkboxTemplate = (rowData) => (
     <Checkbox
       checked={selectedItems.some((item) => item._id === rowData._id)}
       onChange={(e) => {
@@ -104,7 +151,7 @@ const p_booleanTemplate6 = (rowData, { rowIndex }) => <p >{String(rowData.favour
       console.error("Failed to delete selected records", error);
     }
   };
-    
+
   const handleMessage = () => {
     setShowDialog(true); // Open the dialog
   };
@@ -113,10 +160,10 @@ const p_booleanTemplate6 = (rowData, { rowIndex }) => <p >{String(rowData.favour
     setShowDialog(false); // Close the dialog
   };
 
-    return (
-        <>
-        <DataTable 
-           value={items}
+  return (
+    <>
+      <DataTable
+        value={items}
         ref={dt}
         removableSort
         onRowClick={onRowClick}
@@ -136,24 +183,76 @@ const p_booleanTemplate6 = (rowData, { rowIndex }) => <p >{String(rowData.favour
         onCreateResult={onCreateResult}
         globalFilter={globalFilter}
         header={header}
-        >
-                <Column
+      >
+        <Column
           selectionMode="multiple"
           headerStyle={{ width: "3rem" }}
           body={checkboxTemplate}
         />
-<Column field="orderNumber" header="Order Number" body={pTemplate0} filter={selectedFilterFields.includes("orderNumber")} hidden={selectedHideFields?.includes("orderNumber")}  sortable style={{ minWidth: "8rem" }} />
-<Column field="orderDate" header="Order Date" body={p_dateTemplate1} filter={selectedFilterFields.includes("orderDate")} hidden={selectedHideFields?.includes("orderDate")}  sortable style={{ minWidth: "8rem" }} />
-<Column field="totalAmount" header="Total Amount" body={currencyTemplate2} filter={selectedFilterFields.includes("totalAmount")} hidden={selectedHideFields?.includes("totalAmount")}  sortable style={{ minWidth: "8rem" }} />
-<Column field="orderStatus" header="Order Status" body={pTemplate3} filter={selectedFilterFields.includes("orderStatus")} hidden={selectedHideFields?.includes("orderStatus")}  sortable style={{ minWidth: "8rem" }} />
-<Column field="canReorder" header="Can Reorder" body={p_booleanTemplate4} filter={selectedFilterFields.includes("canReorder")} hidden={selectedHideFields?.includes("canReorder")}  style={{ minWidth: "8rem" }} />
-<Column field="variantLabel" header="Variant Label" body={pTemplate5} filter={selectedFilterFields.includes("variantLabel")} hidden={selectedHideFields?.includes("variantLabel")}  sortable style={{ minWidth: "8rem" }} />
-<Column field="favourite" header="Favourite" body={p_booleanTemplate6} filter={selectedFilterFields.includes("favourite")} hidden={selectedHideFields?.includes("favourite")}  style={{ minWidth: "8rem" }} />
-            <Column header="Edit" body={editTemplate} />
-            <Column header="Delete" body={deleteTemplate} />
-            
-        </DataTable>
-
+        <Column
+          field="orderNumber"
+          header="Order Number"
+          body={pTemplate0}
+          filter={selectedFilterFields.includes("orderNumber")}
+          hidden={selectedHideFields?.includes("orderNumber")}
+          sortable
+          style={{ minWidth: "8rem" }}
+        />
+        <Column
+          field="orderDate"
+          header="Order Date"
+          body={p_dateTemplate1}
+          filter={selectedFilterFields.includes("orderDate")}
+          hidden={selectedHideFields?.includes("orderDate")}
+          sortable
+          style={{ minWidth: "8rem" }}
+        />
+        <Column
+          field="totalAmount"
+          header="Total Amount"
+          body={currencyTemplate2}
+          filter={selectedFilterFields.includes("totalAmount")}
+          hidden={selectedHideFields?.includes("totalAmount")}
+          sortable
+          style={{ minWidth: "8rem" }}
+        />
+        <Column
+          field="orderStatus"
+          header="Order Status"
+          body={pTemplate3}
+          filter={selectedFilterFields.includes("orderStatus")}
+          hidden={selectedHideFields?.includes("orderStatus")}
+          sortable
+          style={{ minWidth: "8rem" }}
+        />
+        <Column
+          field="canReorder"
+          header="Can Reorder"
+          body={p_booleanTemplate4}
+          filter={selectedFilterFields.includes("canReorder")}
+          hidden={selectedHideFields?.includes("canReorder")}
+          style={{ minWidth: "8rem" }}
+        />
+        <Column
+          field="variantLabel"
+          header="Variant Label"
+          body={pTemplate5}
+          filter={selectedFilterFields.includes("variantLabel")}
+          hidden={selectedHideFields?.includes("variantLabel")}
+          sortable
+          style={{ minWidth: "8rem" }}
+        />
+        <Column
+          field="favourite"
+          header="Favourite"
+          body={p_booleanTemplate6}
+          filter={selectedFilterFields.includes("favourite")}
+          hidden={selectedHideFields?.includes("favourite")}
+          style={{ minWidth: "8rem" }}
+        />
+        <Column header="Edit" body={editTemplate} />
+        <Column header="Delete" body={deleteTemplate} />
+      </DataTable>
 
       {selectedItems.length > 0 ? (
         <div
@@ -329,19 +428,27 @@ const p_booleanTemplate6 = (rowData, { rowIndex }) => <p >{String(rowData.favour
         </div>
       ) : null}
 
-
-        <Dialog header="Upload OrderHistory Data" visible={showUpload} onHide={() => setShowUpload(false)}>
-        <UploadService 
-          user={user} 
-          serviceName="orderHistory"            
+      <Dialog
+        header="Upload OrderHistory Data"
+        visible={showUpload}
+        onHide={() => setShowUpload(false)}
+      >
+        <UploadService
+          user={user}
+          serviceName="orderHistory"
           onUploadComplete={() => {
             setShowUpload(false); // Close the dialog after upload
-          }}/>
+          }}
+        />
       </Dialog>
 
-      <Dialog header="Search OrderHistory" visible={searchDialog} onHide={() => setSearchDialog(false)}>
-      Search
-    </Dialog>
+      <Dialog
+        header="Search OrderHistory"
+        visible={searchDialog}
+        onHide={() => setSearchDialog(false)}
+      >
+        Search
+      </Dialog>
       <Dialog
         header="Hide Columns"
         visible={showColumns}
@@ -367,12 +474,12 @@ const p_booleanTemplate6 = (rowData, { rowIndex }) => <p >{String(rowData.favour
             console.log(selectedHideFields);
             onClickSaveHiddenfields(selectedHideFields);
             setSelectedHideFields(selectedHideFields);
-            setShowColumns(false)
+            setShowColumns(false);
           }}
         ></Button>
       </Dialog>
-        </>
-    );
+    </>
+  );
 };
 
 export default OrderHistoryDataTable;

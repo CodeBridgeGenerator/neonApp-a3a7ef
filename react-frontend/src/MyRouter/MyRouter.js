@@ -15,6 +15,13 @@ import Account from '../components/cb_components/Account/Account';
 import CBRouter from './CBRouter';
 import AppRouter from './AppRouter';
 import '../assets/mainTheme/modal.css';
+import Homepage from '../components/app_components/Homepage/Homepage';
+import CategoryProjectLayoutPage from '../components/app_components/CategoryPage/CategoryProjectLayoutPage';
+import SingleCategoryPage from '../components/app_components/CategoryPage/SingleCategoryPage';
+import CategoryPage from '../components/app_components/CategoryPage/CategoryPage';
+import ProductPage from '../components/app_components/ProductPage/ProductPage';
+import OrderPage from '../components/app_components/OrderPage/OrderPage';
+import CheckoutPage from '../components/app_components/CheckoutPage/CheckoutPage';
 
 //  ~cb-add-import~
 
@@ -54,36 +61,13 @@ const MyRouter = (props) => {
 
     return (
         <Routes>
-            <Route
-                path="/"
-                exact
-                element={
-                    props.isLoggedIn ? (
-                        <div className="flex min-h-[calc(100vh-5rem)] bg-white mt-20">
-                            <ProjectSideBarLayout>
-                                <DashboardWelcome />
-                            </ProjectSideBarLayout>
-                        </div>
-                    ) : (
-                        <LoginPage />
-                    )
-                }
-            />
-            <Route
-                path="/login"
-                exact
-                element={
-                    props.isLoggedIn ? (
-                        <div className="flex min-h-[calc(100vh-5rem)] bg-white mt-20">
-                            <ProjectSideBarLayout>
-                                <DashboardWelcome />
-                            </ProjectSideBarLayout>
-                        </div>
-                    ) : (
-                        <LoginPage />
-                    )
-                }
-            />
+            <Route path="/" element={<Homepage />} />
+            <Route path="/category" element={<CategoryPage/>} />
+            <Route path="/category/:singleCategoryId" element={<SingleCategoryPage />} />
+            <Route path="/product/:singleProductId" element={<ProductPage />} />
+            <Route path="/orderpage" element={<OrderPage />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/login" element={<LoginPage />} />
             <Route path="/reset/:singleChangeForgotPasswordId" exact element={<ResetPage />} />
             <Route path="/signup" exact element={<SignUpPage />} />
             <Route path="/maintenance" exact element={<MaintenancePage />} />

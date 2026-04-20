@@ -70,13 +70,14 @@ app.hooks({
 
                 const token = localStorage.getItem('feathers-jwt');
 
-                if ((context.error.name === 'NotAuthenticated' || context.error.code === 401) && isTokenExpired(token)) {
-                    localStorage.removeItem('feathers-jwt');
-
-                    if (!window.location.pathname.startsWith('/login')) {
-                        window.location.href = '/login?sessionExpired=true';
-                    }
-                }
+                // TODO: re-enable session expiry redirect when ready
+                // if ((context.error.name === 'NotAuthenticated' || context.error.code === 401) && isTokenExpired(token)) {
+                //     localStorage.removeItem('feathers-jwt');
+                //
+                //     if (!window.location.pathname.startsWith('/login')) {
+                //         window.location.href = '/login?sessionExpired=true';
+                //     }
+                // }
                 return context;
             }
         ]

@@ -1,13 +1,13 @@
-import { Column } from 'primereact/column';
-import { DataTable } from 'primereact/datatable';
-import React, { useState, useRef, useEffect} from 'react';
-import _ from 'lodash';
-import { Button } from 'primereact/button';
-import { Image } from 'primereact/image';
+import { Column } from "primereact/column";
+import { DataTable } from "primereact/datatable";
+import React, { useState, useRef, useEffect } from "react";
+import _ from "lodash";
+import { Button } from "primereact/button";
+import { Image } from "primereact/image";
 import { useParams } from "react-router-dom";
 import moment from "moment";
 import UploadService from "../../../services/UploadService";
-import { InputText } from 'primereact/inputtext';
+import { InputText } from "primereact/inputtext";
 import { Dialog } from "primereact/dialog";
 import { MultiSelect } from "primereact/multiselect";
 import DownloadCSV from "../../../utils/DownloadCSV";
@@ -19,15 +19,35 @@ import DuplicateIcon from "../../../assets/media/Duplicate.png";
 import DeleteIcon from "../../../assets/media/Trash.png";
 import { Checkbox } from "primereact/checkbox";
 
-const ProductColorDataTable = ({ items, fields, onEditRow, onRowDelete, onRowClick, searchDialog, setSearchDialog,   showUpload, setShowUpload,
-    showFilter, setShowFilter,
-    showColumns, setShowColumns, onClickSaveFilteredfields ,
-    selectedFilterFields, setSelectedFilterFields,
-    selectedHideFields, setSelectedHideFields, onClickSaveHiddenfields, loading, user,   selectedDelete,
-  setSelectedDelete, onCreateResult}) => {
-    const dt = useRef(null);
-    const urlParams = useParams();
-    const [globalFilter, setGlobalFilter] = useState('');
+const ProductColorDataTable = ({
+  items,
+  fields,
+  onEditRow,
+  onRowDelete,
+  onRowClick,
+  searchDialog,
+  setSearchDialog,
+  showUpload,
+  setShowUpload,
+  showFilter,
+  setShowFilter,
+  showColumns,
+  setShowColumns,
+  onClickSaveFilteredfields,
+  selectedFilterFields,
+  setSelectedFilterFields,
+  selectedHideFields,
+  setSelectedHideFields,
+  onClickSaveHiddenfields,
+  loading,
+  user,
+  selectedDelete,
+  setSelectedDelete,
+  onCreateResult,
+}) => {
+  const dt = useRef(null);
+  const urlParams = useParams();
+  const [globalFilter, setGlobalFilter] = useState("");
   const [selectedItems, setSelectedItems] = useState([]);
   const [showDialog, setShowDialog] = useState(false);
   const [data, setData] = useState([]);
@@ -53,15 +73,29 @@ const ProductColorDataTable = ({ items, fields, onEditRow, onRowDelete, onRowCli
     </div>
   );
 
-const pTemplate0 = (rowData, { rowIndex }) => <p >{rowData.productName}</p>
-const pTemplate1 = (rowData, { rowIndex }) => <p >{rowData.colorName}</p>
-const pTemplate2 = (rowData, { rowIndex }) => <p >{rowData.colorCode}</p>
-const imageTemplate3 = (rowData, { rowIndex }) => <Image src={rowData.colorImage}  alt="Image" height="60px" />
-const pTemplate4 = (rowData, { rowIndex }) => <p >{rowData.defaultColor}</p>
-    const editTemplate = (rowData, { rowIndex }) => <Button onClick={() => onEditRow(rowData, rowIndex)} icon={`pi ${rowData.isEdit ? "pi-check" : "pi-pencil"}`} className={`p-button-rounded p-button-text ${rowData.isEdit ? "p-button-success" : "p-button-warning"}`} />;
-    const deleteTemplate = (rowData, { rowIndex }) => <Button onClick={() => onRowDelete(rowData._id)} icon="pi pi-times" className="p-button-rounded p-button-danger p-button-text" />;
-    
-      const checkboxTemplate = (rowData) => (
+  const pTemplate0 = (rowData, { rowIndex }) => <p>{rowData.productName}</p>;
+  const pTemplate1 = (rowData, { rowIndex }) => <p>{rowData.colorName}</p>;
+  const pTemplate2 = (rowData, { rowIndex }) => <p>{rowData.colorCode}</p>;
+  const imageTemplate3 = (rowData, { rowIndex }) => (
+    <Image src={rowData.colorImage} alt="Image" height="60px" />
+  );
+  const pTemplate4 = (rowData, { rowIndex }) => <p>{rowData.defaultColor}</p>;
+  const editTemplate = (rowData, { rowIndex }) => (
+    <Button
+      onClick={() => onEditRow(rowData, rowIndex)}
+      icon={`pi ${rowData.isEdit ? "pi-check" : "pi-pencil"}`}
+      className={`p-button-rounded p-button-text ${rowData.isEdit ? "p-button-success" : "p-button-warning"}`}
+    />
+  );
+  const deleteTemplate = (rowData, { rowIndex }) => (
+    <Button
+      onClick={() => onRowDelete(rowData._id)}
+      icon="pi pi-times"
+      className="p-button-rounded p-button-danger p-button-text"
+    />
+  );
+
+  const checkboxTemplate = (rowData) => (
     <Checkbox
       checked={selectedItems.some((item) => item._id === rowData._id)}
       onChange={(e) => {
@@ -102,7 +136,7 @@ const pTemplate4 = (rowData, { rowIndex }) => <p >{rowData.defaultColor}</p>
       console.error("Failed to delete selected records", error);
     }
   };
-    
+
   const handleMessage = () => {
     setShowDialog(true); // Open the dialog
   };
@@ -111,10 +145,10 @@ const pTemplate4 = (rowData, { rowIndex }) => <p >{rowData.defaultColor}</p>
     setShowDialog(false); // Close the dialog
   };
 
-    return (
-        <>
-        <DataTable 
-           value={items}
+  return (
+    <>
+      <DataTable
+        value={items}
         ref={dt}
         removableSort
         onRowClick={onRowClick}
@@ -134,22 +168,60 @@ const pTemplate4 = (rowData, { rowIndex }) => <p >{rowData.defaultColor}</p>
         onCreateResult={onCreateResult}
         globalFilter={globalFilter}
         header={header}
-        >
-                <Column
+      >
+        <Column
           selectionMode="multiple"
           headerStyle={{ width: "3rem" }}
           body={checkboxTemplate}
         />
-<Column field="productName" header="Product Name" body={pTemplate0} filter={selectedFilterFields.includes("productName")} hidden={selectedHideFields?.includes("productName")}  sortable style={{ minWidth: "8rem" }} />
-<Column field="colorName" header="Color Name" body={pTemplate1} filter={selectedFilterFields.includes("colorName")} hidden={selectedHideFields?.includes("colorName")}  sortable style={{ minWidth: "8rem" }} />
-<Column field="colorCode" header="Color Code" body={pTemplate2} filter={selectedFilterFields.includes("colorCode")} hidden={selectedHideFields?.includes("colorCode")}  sortable style={{ minWidth: "8rem" }} />
-<Column field="colorImage" header="Color Image" body={imageTemplate3} filter={selectedFilterFields.includes("colorImage")} hidden={selectedHideFields?.includes("colorImage")}  sortable style={{ minWidth: "8rem" }} />
-<Column field="defaultColor" header="Default Color" body={pTemplate4} filter={selectedFilterFields.includes("defaultColor")} hidden={selectedHideFields?.includes("defaultColor")}  sortable style={{ minWidth: "8rem" }} />
-            <Column header="Edit" body={editTemplate} />
-            <Column header="Delete" body={deleteTemplate} />
-            
-        </DataTable>
-
+        <Column
+          field="productName"
+          header="Product Name"
+          body={pTemplate0}
+          filter={selectedFilterFields.includes("productName")}
+          hidden={selectedHideFields?.includes("productName")}
+          sortable
+          style={{ minWidth: "8rem" }}
+        />
+        <Column
+          field="colorName"
+          header="Color Name"
+          body={pTemplate1}
+          filter={selectedFilterFields.includes("colorName")}
+          hidden={selectedHideFields?.includes("colorName")}
+          sortable
+          style={{ minWidth: "8rem" }}
+        />
+        <Column
+          field="colorCode"
+          header="Color Code"
+          body={pTemplate2}
+          filter={selectedFilterFields.includes("colorCode")}
+          hidden={selectedHideFields?.includes("colorCode")}
+          sortable
+          style={{ minWidth: "8rem" }}
+        />
+        <Column
+          field="colorImage"
+          header="Color Image"
+          body={imageTemplate3}
+          filter={selectedFilterFields.includes("colorImage")}
+          hidden={selectedHideFields?.includes("colorImage")}
+          sortable
+          style={{ minWidth: "8rem" }}
+        />
+        <Column
+          field="defaultColor"
+          header="Default Color"
+          body={pTemplate4}
+          filter={selectedFilterFields.includes("defaultColor")}
+          hidden={selectedHideFields?.includes("defaultColor")}
+          sortable
+          style={{ minWidth: "8rem" }}
+        />
+        <Column header="Edit" body={editTemplate} />
+        <Column header="Delete" body={deleteTemplate} />
+      </DataTable>
 
       {selectedItems.length > 0 ? (
         <div
@@ -325,19 +397,27 @@ const pTemplate4 = (rowData, { rowIndex }) => <p >{rowData.defaultColor}</p>
         </div>
       ) : null}
 
-
-        <Dialog header="Upload ProductColor Data" visible={showUpload} onHide={() => setShowUpload(false)}>
-        <UploadService 
-          user={user} 
-          serviceName="productColor"            
+      <Dialog
+        header="Upload ProductColor Data"
+        visible={showUpload}
+        onHide={() => setShowUpload(false)}
+      >
+        <UploadService
+          user={user}
+          serviceName="productColor"
           onUploadComplete={() => {
             setShowUpload(false); // Close the dialog after upload
-          }}/>
+          }}
+        />
       </Dialog>
 
-      <Dialog header="Search ProductColor" visible={searchDialog} onHide={() => setSearchDialog(false)}>
-      Search
-    </Dialog>
+      <Dialog
+        header="Search ProductColor"
+        visible={searchDialog}
+        onHide={() => setSearchDialog(false)}
+      >
+        Search
+      </Dialog>
       <Dialog
         header="Hide Columns"
         visible={showColumns}
@@ -363,12 +443,12 @@ const pTemplate4 = (rowData, { rowIndex }) => <p >{rowData.defaultColor}</p>
             console.log(selectedHideFields);
             onClickSaveHiddenfields(selectedHideFields);
             setSelectedHideFields(selectedHideFields);
-            setShowColumns(false)
+            setShowColumns(false);
           }}
         ></Button>
       </Dialog>
-        </>
-    );
+    </>
+  );
 };
 
 export default ProductColorDataTable;

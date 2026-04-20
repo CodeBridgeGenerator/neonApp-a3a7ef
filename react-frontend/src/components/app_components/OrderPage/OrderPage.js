@@ -1,64 +1,93 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { connect } from "react-redux";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { useNavigate, useParams, useLocation, Link } from "react-router-dom";
 import _ from "lodash";
 import { classNames } from "primereact/utils";
 import { Button } from "primereact/button";
 import { SplitButton } from "primereact/splitbutton";
+import { InputText } from "primereact/inputtext";
+import { StyleClass } from "primereact/styleclass";
+import { Ripple } from "primereact/ripple";
+import { Badge } from "primereact/badge";
+import { Divider } from "primereact/divider";
+import { Dropdown } from "primereact/dropdown";
 import client from "../../../services/restClient";
 import entityCreate from "../../../utils/entity";
 import DownloadCSV from "../../../utils/DownloadCSV";
 import AreYouSureDialog from "../../common/AreYouSureDialog";
-import OrderDatatable from "./OrderDataTable";
 import OrderEditDialogComponent from "./OrderEditDialogComponent";
 import OrderCreateDialogComponent from "./OrderCreateDialogComponent";
 import OrderFakerDialogComponent from "./OrderFakerDialogComponent";
 import OrderSeederDialogComponent from "./OrderSeederDialogComponent";
-import SortMenu from "../../../services/SortMenu";
-import FilterMenu from "../../../services/FilterMenu";
 
 const OrderPage = (props) => {
-    const navigate = useNavigate();
-    const location = useLocation();
-    const [data, setData] = useState([]);
-    const [fields, setFields] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [showAreYouSureDialog, setShowAreYouSureDialog] = useState(false);
-    const [showEditDialog, setShowEditDialog] = useState(false);
-    const [showCreateDialog, setShowCreateDialog] = useState(false);
-    const [newRecord, setRecord] = useState({});
-    const [showFakerDialog, setShowFakerDialog] = useState(false);
-    const [showDeleteAllDialog, setShowDeleteAllDialog] = useState(false);
-    const [showSeederDialog, setShowSeederDialog] = useState(false);
-    const [selectedEntityIndex, setSelectedEntityIndex] = useState(null);
-    const [showUpload, setShowUpload] = useState(false);
-    const [showFilter, setShowFilter] = useState(false);
-    const [selectedFilterFields, setSelectedFilterFields] = useState([]);
-    const [selectedHideFields, setSelectedHideFields] = useState([]);
-    const [showColumns, setShowColumns] = useState(false);
-    const [searchDialog, setSearchDialog] = useState(false);
-    const [triggerDownload, setTriggerDownload] = useState(false);
-    const urlParams = useParams();
-    const filename = "order";
-    const [isHelpSidebarVisible, setHelpSidebarVisible] = useState(false);
-    const [initialData, setInitialData] = useState([]);
-    const [selectedSortOption, setSelectedSortOption] = useState("");
-    const [selectedDelete, setSelectedDelete] = useState([]);
-    const [selectedUser, setSelectedUser] = useState();
-    const [permissions, setPermissions] = useState({});
-    const [refresh, setRefresh] = useState(false);
-    const [paginatorRecordsNo, setPaginatorRecordsNo] = useState(10);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [data, setData] = useState([]);
+  const [fields, setFields] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [showAreYouSureDialog, setShowAreYouSureDialog] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [newRecord, setRecord] = useState({});
+  const [showFakerDialog, setShowFakerDialog] = useState(false);
+  const [showDeleteAllDialog, setShowDeleteAllDialog] = useState(false);
+  const [showSeederDialog, setShowSeederDialog] = useState(false);
+  const [selectedEntityIndex, setSelectedEntityIndex] = useState(null);
+  const [showUpload, setShowUpload] = useState(false);
+  const [showFilter, setShowFilter] = useState(false);
+  const [selectedFilterFields, setSelectedFilterFields] = useState([]);
+  const [selectedHideFields, setSelectedHideFields] = useState([]);
+  const [showColumns, setShowColumns] = useState(false);
+  const [searchDialog, setSearchDialog] = useState(false);
+  const [triggerDownload, setTriggerDownload] = useState(false);
+  const urlParams = useParams();
+  const filename = "order";
+  const [isHelpSidebarVisible, setHelpSidebarVisible] = useState(false);
+  const [initialData, setInitialData] = useState([]);
+  const [selectedSortOption, setSelectedSortOption] = useState("");
+  const [selectedDelete, setSelectedDelete] = useState([]);
+  const [selectedUser, setSelectedUser] = useState();
+  const [permissions, setPermissions] = useState({});
+  const [refresh, setRefresh] = useState(false);
+  const [paginatorRecordsNo, setPaginatorRecordsNo] = useState(10);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
-    const toggleHelpSidebar = () => {
-        setHelpSidebarVisible(!isHelpSidebarVisible);
-      };
-    
+  const btnRef1 = useRef(null);
+  const btnRef2 = useRef(null);
+  const btnRef3 = useRef(null);
+  const btnRef4 = useRef(null);
+  const btnRef5 = useRef(null);
 
-    useEffect(() => {
-        const _getSchema = async () => {
-            const _schema = await props.getSchema("order");
-             const excludedFields = ["_id", "createdBy", "updatedBy", "createdAt", "updatedAt"];
+  const [value1, setValue1] = useState(1);
+  const [value2, setValue2] = useState(1);
+
+  const quantityOptions = [
+    { label: "1", value: 1 },
+    { label: "2", value: 2 },
+    { label: "3", value: 3 },
+    { label: "4", value: 4 },
+    { label: "5", value: 5 },
+  ];
+
+  const toggleHelpSidebar = () => {
+    setHelpSidebarVisible(!isHelpSidebarVisible);
+  };
+
+  useEffect(() => {
+    if (!props.isLoggedIn) return;
+    const _getSchema = async () => {
+      const _schema = await props.getSchema("order");
+      const excludedFields = [
+        "_id",
+        "createdBy",
+        "updatedBy",
+        "createdAt",
+        "updatedAt",
+      ];
 
       const _fields = _schema.data
         .filter((f) => !excludedFields.includes(f.field))
@@ -95,305 +124,834 @@ const OrderPage = (props) => {
     }
   }, []);
 
-    useEffect(() => {
-        //on mount
-        setLoading(true);
-        props.show();
-        client
-            .service("order")
-            .find({ query: { $limit: 10000 , customerName : urlParams.singleCustomerDetailsId  , $populate : [
-                {
-                path: "createdBy",
-                service: "users",
-                select: ["name"],
-              },{
-                path: "updatedBy",
-                service: "users",
-                select: ["name"],
-              },{
-                        path : "customerName",
-                        service : "customer_details",
-                        select:["customerName","customerEmail","customerAddress","phoneNumber"]
-                    }
-            ] }})
-            .then((res) => {
-                let results = res.data;
-                 
-                setData(results);
-                props.hide();
-                setLoading(false);
-            })
-            .catch((error) => {
-                console.log({ error });
-                setLoading(false);
-                props.hide();
-                props.alert({ title: "Order", type: "error", message: error.message || "Failed get Order" });
-            });
-    }, [showFakerDialog, showDeleteAllDialog, showEditDialog, showCreateDialog]);
+  useEffect(() => {
+    if (!props.isLoggedIn) return;
+    setLoading(true);
+    props.show();
+    client
+      .service("order")
+      .find({
+        query: {
+          $limit: 10000,
+          customerName: urlParams.singleCustomerDetailsId,
+          $populate: [
+            { path: "createdBy", service: "users", select: ["name"] },
+            { path: "updatedBy", service: "users", select: ["name"] },
+            {
+              path: "customerName",
+              service: "customer_details",
+              select: [
+                "customerName",
+                "customerEmail",
+                "customerAddress",
+                "phoneNumber",
+              ],
+            },
+          ],
+        },
+      })
+      .then((res) => {
+        let results = res.data;
+        setData(results);
+        props.hide();
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.log({ error });
+        setLoading(false);
+        props.hide();
+        props.alert({
+          title: "Order",
+          type: "error",
+          message: error.message || "Failed get Order",
+        });
+      });
+  }, [showFakerDialog, showDeleteAllDialog, showEditDialog, showCreateDialog]);
 
   const onClickSaveFilteredfields = (ff) => {
     setSelectedFilterFields(ff);
     setShowFilter(false);
   };
 
-   
   const onClickSaveHiddenfields = (ff) => {
     console.log(ff);
   };
 
+  const onEditRow = (rowData, rowIndex) => {
+    setSelectedEntityIndex(rowData._id);
+    setShowEditDialog(true);
+  };
 
-    const onEditRow = (rowData, rowIndex) => {
-        setSelectedEntityIndex(rowData._id);
-        setShowEditDialog(true);
-    };
+  const onCreateResult = (newEntity) => {
+    setData([...data, newEntity]);
+  };
+  const onFakerCreateResults = (newEntities) => {
+    setSelectedEntityIndex();
+    setData([...data, ...newEntities]);
+  };
+  const onSeederResults = (newEntities) => {
+    setSelectedEntityIndex();
+    setData([...data, ...newEntities]);
+  };
 
-    const onCreateResult = (newEntity) => {
-        setData([...data, newEntity]);
-    };
-    const onFakerCreateResults = (newEntities) => {
-        setSelectedEntityIndex();
-        setData([...data, ...newEntities]);
-    };
-    const onSeederResults = (newEntities) => {
-        setSelectedEntityIndex();
-        setData([...data, ...newEntities]);
-    };
+  const onEditResult = (newEntity) => {
+    let _newData = _.cloneDeep(data);
+    _.set(_newData, { _id: selectedEntityIndex }, newEntity);
+    setData(_newData);
+  };
 
-    const onEditResult = (newEntity) => {
-        let _newData = _.cloneDeep(data);
-        _.set(_newData, { _id : selectedEntityIndex},  newEntity);
-        setData(_newData);
-    };
+  const deleteRow = async () => {
+    try {
+      await client.service("order").remove(selectedEntityIndex);
+      let _newData = data.filter((data) => data._id !== selectedEntityIndex);
+      setData(_newData);
+      setSelectedEntityIndex();
+      setShowAreYouSureDialog(false);
+    } catch (error) {
+      console.log({ error });
+      props.alert({
+        title: "Order",
+        type: "error",
+        message: error.message || "Failed delete record",
+      });
+    }
+  };
 
-    const deleteRow = async () => {
-        try {
-            await client.service("order").remove(selectedEntityIndex);
-            let _newData = data.filter((data) => data._id !== selectedEntityIndex);
-            setData(_newData);
-            setSelectedEntityIndex();
-            setShowAreYouSureDialog(false)
-        } catch (error) {
-            console.log({ error });
-            props.alert({ title: "Order", type: "error", message: error.message || "Failed delete record" });
-        }
-    };
-    const onRowDelete = (index) => {
-        setSelectedEntityIndex(index);
-        setShowAreYouSureDialog(true);
-    };
+  const onRowDelete = (index) => {
+    setSelectedEntityIndex(index);
+    setShowAreYouSureDialog(true);
+  };
 
-    const onShowDeleteAll = (rowData, rowIndex) => {
-        setShowDeleteAllDialog(true);
-    };
+  const onShowDeleteAll = (rowData, rowIndex) => {
+    setShowDeleteAllDialog(true);
+  };
 
-    const deleteAll = async () => {
-      setLoading(true);
-      props.show();
-        const countDataItems = data?.length;
-        const promises = data.map((e) => client.service("order").remove(e._id));
-        await Promise.all(
-          promises.map((p) =>
-            p.catch((error) => {
-              props.alert({
-                title: "Order",
-                type: "error",
-                message: error.message || "Failed to delete all records",
-              });
-              setLoading(false);
-              props.hide();
-              console.log({ error });
-            })
-          )
-        );
-        props.hide();
-        setLoading(false);
-        setShowDeleteAllDialog(false);
-        await props.alert({
-          title: "Order",
-          type: "warn",
-          message: `Successfully dropped ${countDataItems} records`,
-        });
-      };
+  const deleteAll = async () => {
+    setLoading(true);
+    props.show();
+    const countDataItems = data?.length;
+    const promises = data.map((e) => client.service("order").remove(e._id));
+    await Promise.all(
+      promises.map((p) =>
+        p.catch((error) => {
+          props.alert({
+            title: "Order",
+            type: "error",
+            message: error.message || "Failed to delete all records",
+          });
+          setLoading(false);
+          props.hide();
+          console.log({ error });
+        }),
+      ),
+    );
+    props.hide();
+    setLoading(false);
+    setShowDeleteAllDialog(false);
+    await props.alert({
+      title: "Order",
+      type: "warn",
+      message: `Successfully dropped ${countDataItems} records`,
+    });
+  };
 
-    const onRowClick = ({data}) => {
-        
-        navigate(`/order/${data._id}`);
-    };
+  const cartItems = [1];
 
-    const menuItems = [
-        {
-          label: "Copy link",
-          icon: "pi pi-copy",
-          command: () => copyPageLink(),
-        },
-        // {
-        //     label: "Share",
-        //     icon: "pi pi-share-alt",
-        //     command: () => setSearchDialog(true)
-        // },
-        {
-          label: "Import",
-          icon: "pi pi-upload",
-          command: () => setShowUpload(true),
-        },
-        {
-          label: "Export",
-          icon: "pi pi-download",
-          command: () => {
-            // Trigger the download by setting the triggerDownload state
-            data.length> 0 ? setTriggerDownload(true) : props.alert({title : "Export" , type: "warn", message : "no data to export"});
-          },
-        },
-        {
-          label: "Help",
-          icon: "pi pi-question-circle",
-          command: () => toggleHelpSidebar(),
-        },
-        { separator: true },
-    
-        {
-          label: "Testing",
-          icon: "pi pi-check-circle",
-          items: [
-            {
-              label: "Faker",
-              icon: "pi pi-bullseye",
-              command: (e) => {
-                setShowFakerDialog(true);
-              },
-              show: true,
-            },
-            {
-              label: `Drop ${data?.length}`,
-              icon: "pi pi-trash",
-              command: (e) => {
-                setShowDeleteAllDialog(true);
-              },
-            },
-          ],
-        },
-        {
-          label: "Data seeder",
-          icon: "pi pi-database",
-          command: (e) => {
-            setShowSeederDialog(true);
-          },
-        },
-      ];
+  const onRowClick = ({ data }) => {
+    navigate(`/order/${data._id}`);
+  };
 
+  return (
+    <>
+      {/* ---------------- NEW LAYOUT START ---------------- */}
+      <div className="bg-orange-400 px-4 lg:px-8 py-3 lg:py-3 flex flex-column sm:flex-row w-full justify-content-between align-items-center">
+        <span className="text-0">
+          Sign Up for <span className="text-900 font-bold">15%</span>off your
+          first order
+        </span>
+        <a
+          tabIndex="0"
+          className="cursor-pointer h-full inline-flex align-items-center mt-3 sm:mt-0 md:py-0"
+        >
+          <img
+            src="/photo/storefront/storefront-1-19.png"
+            className="mr-2"
+            alt="Flag"
+          />
+          <span className="text-0">EUR</span>
+        </a>
+      </div>
+      <div
+        className="surface-overlay px-3 lg:px-6 flex align-items-stretch relative border-bottom-1 surface-border"
+        style={{ minHeight: "80px" }}
+      >
+        <div className="flex align-items-center justify-content-center">
+          <img
+            src="/photo/logos/hyper-700.svg"
+            alt="Image"
+            height="40"
+            className="hidden lg:inline mr-3 lg:mr-6"
+          />
+          <img
+            src="/photo/logos/hyper.svg"
+            alt="Image"
+            height="40"
+            className="inline lg:hidden mr-3 lg:mr-6"
+          />
+        </div>
+        <div className="flex align-items-center flex-auto">
+          <div className="p-input-icon-left w-full p-input-filled">
+            <i className="pi pi-search"></i>
+            <InputText
+              type="text"
+              className="w-full"
+              placeholder="Product search"
+            />
+          </div>
+        </div>
+        <div className="flex ml-3 lg:ml-6">
+          <ul className="list-none p-0 m-0 flex">
+            <li className="inline-flex relative">
+              <StyleClass
+                nodeRef={btnRef1}
+                selector="@next"
+                enterClassName="hidden"
+                enterActiveClassName="scalein"
+                leaveToClassName="hidden"
+                leaveActiveClassName="fadeout"
+                hideOnOutsideClick
+              >
+                <a
+                  ref={btnRef1}
+                  className="p-ripple text-900 font-medium inline-flex align-items-center cursor-pointer px-1 lg:px-3 mr-2 lg:mr-0 border-bottom-2 border-transparent hover:border-primary select-none"
+                >
+                  <i className="pi pi-user text-xl"></i>
+                  <span className="hidden">My Account</span>
+                  <Ripple />
+                </a>
+              </StyleClass>
+              <div className="hidden border-round surface-overlay p-3 shadow-2 absolute right-0 top-100 z-1 w-15rem origin-top">
+                <ul className="list-none p-0 m-0">
+                  <li>
+                    <a className="cursor-pointer text-700 hover:text-900 hover:surface-100 border-round flex align-items-center px-3 py-2">
+                      <i className="pi pi-fw pi-box text-lg mr-2"></i>
+                      <span>Orders</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a className="cursor-pointer text-700 hover:text-900 hover:surface-100 border-round flex align-items-center px-3 py-2">
+                      <i className="pi pi-fw pi-heart text-lg mr-2"></i>
+                      <span>Favorites</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a className="cursor-pointer text-700 hover:text-900 hover:surface-100 border-round flex align-items-center px-3 py-2">
+                      <i className="pi pi-fw pi-star text-lg mr-2"></i>
+                      <span>Reviews</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a className="cursor-pointer text-700 hover:text-900 hover:surface-100 border-round flex align-items-center px-3 py-2">
+                      <i className="pi pi-fw pi-sign-out text-lg mr-2"></i>
+                      <span>Sign Out</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </li>
+            <li className="inline-flex relative">
+              <StyleClass
+                nodeRef={btnRef2}
+                selector="@next"
+                enterClassName="hidden"
+                enterActiveClassName="scalein"
+                leaveToClassName="hidden"
+                leaveActiveClassName="fadeout"
+                hideOnOutsideClick
+              >
+                <a
+                  ref={btnRef2}
+                  className="p-ripple text-900 font-medium inline-flex align-items-center cursor-pointer px-1 lg:px-3 border-bottom-2 border-transparent hover:border-primary select-none"
+                >
+                  <i className="pi pi-shopping-cart text-xl p-overlay-badge">
+                    <Badge value={cartItems.length} severity="danger" />
+                  </i>
+                  <span className="hidden">My Cart</span>
+                  <Ripple />
+                </a>
+              </StyleClass>
 
-    
-    return (
+              <div className="hidden border-round surface-overlay p-4 shadow-2 absolute right-0 top-100 z-1 w-20rem origin-top">
+                <span className="text-900 font-medium mb-3 block">
+                  My Cart (1 Item)
+                </span>
+                <div className="flex align-items-center border-bottom-1 surface-border pb-3">
+                  <img
+                    src="/photo/shoppingcart/shopping-cart-2-2.png"
+                    className="w-4rem flex-shrink-0 shadow-1"
+                    alt="shopping-cart-2-2"
+                  />
+                  <div className="flex flex-column pl-3">
+                    <span className="text-900 font-medium mb-2">
+                      Prime Watch
+                    </span>
+                    <span className="text-600 mb-2">Standard Size</span>
+                    <span className="text-primary font-bold">$50.00</span>
+                  </div>
+                </div>
+                <div className="flex pt-3">
+                  <Button className="p-button-outlined mr-2">View Cart</Button>
+                  <Button className="ml-2">Purchase</Button>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div
+        className="surface-overlay px-2 lg:px-5 flex align-items-stretch relative border-bottom-1 surface-border"
+        style={{ minHeight: "80px" }}
+      >
+        <div className="flex">
+          <ul className="list-none p-0 m-0 flex">
+            <li className="flex">
+              <StyleClass
+                nodeRef={btnRef3}
+                selector="@next"
+                enterClassName="hidden"
+                leaveToClassName="hidden"
+                hideOnOutsideClick
+              >
+                <a
+                  ref={btnRef3}
+                  className="p-ripple font-medium inline-flex align-items-center cursor-pointer border-bottom-2 border-transparent hover:border-primary px-3 text-700 select-none"
+                >
+                  <span>Women</span>
+                  <Ripple />
+                </a>
+              </StyleClass>
+              <div className="surface-overlay shadow-2 hidden absolute w-full left-0 top-100 z-1">
+                <div className="flex flex-wrap justify-content-between p-4 lg:p-6">
+                  <ul className="list-none px-3 lg:px-0 py-0 m-0 text-700 mb-5">
+                    <li className="font-bold mb-5 text-xl text-900">
+                      Clothing
+                    </li>
+                    <li className="mb-3 cursor-pointer hover:text-900">
+                      Dresses
+                    </li>
+                    <li className="mb-3 cursor-pointer hover:text-900">
+                      Jeans
+                    </li>
+                    <li className="mb-3 cursor-pointer hover:text-900">
+                      Pants
+                    </li>
+                    <li className="mb-3 cursor-pointer hover:text-900">
+                      Skirts
+                    </li>
+                    <li className="mb-3 cursor-pointer hover:text-900">
+                      Sweaters
+                    </li>
+                    <li className="mb-3 cursor-pointer hover:text-900">
+                      Blouses
+                    </li>
+                  </ul>
+                  <ul className="list-none px-3 lg:px-0 py-0 m-0 text-700 mb-5">
+                    <li className="font-bold mb-5 text-xl text-900">Shoes</li>
+                    <li className="mb-3 cursor-pointer hover:text-900">
+                      Athletic
+                    </li>
+                    <li className="mb-3 cursor-pointer hover:text-900">
+                      Boots
+                    </li>
+                    <li className="mb-3 cursor-pointer hover:text-900">
+                      Sneakers
+                    </li>
+                    <li className="mb-3 cursor-pointer hover:text-900">
+                      Flats
+                    </li>
+                    <li className="mb-3 cursor-pointer hover:text-900">
+                      Outdoor
+                    </li>
+                  </ul>
+                  <ul className="list-none px-3 lg:px-0 py-0 m-0 text-700 mb-5">
+                    <li className="font-bold mb-5 text-xl text-900">
+                      Accessories
+                    </li>
+                    <li className="mb-3 cursor-pointer hover:text-900">
+                      Handbags
+                    </li>
+                    <li className="mb-3 cursor-pointer hover:text-900">
+                      Gloves
+                    </li>
+                    <li className="mb-3 cursor-pointer hover:text-900">
+                      Belts
+                    </li>
+                    <li className="mb-3 cursor-pointer hover:text-900">Hats</li>
+                    <li className="mb-3 cursor-pointer hover:text-900">
+                      Earmuffs
+                    </li>
+                  </ul>
+                  <ul className="list-none flex p-0 m-0">
+                    <li className="flex flex-column align-items-center mb-5 lg:mr-5 pr-3 lg:pr-0">
+                      <img
+                        src="/photo/storenavigation/storenavigation-3-1.png"
+                        alt="Image"
+                        style={{ borderRadius: "12px" }}
+                        className="mb-5 w-full lg:w-20rem"
+                      />
+                      <span className="inline-flex surface-0 text-900 border-round font-semibold text-xl mb-3">
+                        New Arrivals
+                      </span>
+                      <a className="cursor-pointer text-700 font-medium hover:text-900">
+                        View All
+                      </a>
+                    </li>
+                    <li className="flex flex-column align-items-center pl-3 lg:pl-0">
+                      <img
+                        src="/photo/storenavigation/storenavigation-3-2.png"
+                        alt="Image"
+                        style={{ borderRadius: "12px" }}
+                        className="mb-5 w-full lg:w-20rem"
+                      />
+                      <span className="inline-flex surface-0 text-900 border-round font-semibold text-xl mb-3">
+                        Seasonal
+                      </span>
+                      <a className="cursor-pointer text-700 font-medium hover:text-900">
+                        View All
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </li>
+            <li className="flex">
+              <StyleClass
+                nodeRef={btnRef4}
+                selector="@next"
+                enterClassName="hidden"
+                leaveToClassName="hidden"
+                hideOnOutsideClick
+              >
+                <a
+                  ref={btnRef4}
+                  className="p-ripple font-medium inline-flex align-items-center cursor-pointer border-bottom-2 border-transparent hover:border-primary px-3 text-700 select-none"
+                >
+                  <span>Men</span>
+                  <Ripple />
+                </a>
+              </StyleClass>
 
-        <div className="mt-5">
-            <div className="grid">
-                <div className="col-6 flex align-items-center justify-content-start">
-                    <h4 className="mb-0 ml-2">
-                        <span> My App /{" "}</span>
-                        <strong>Order </strong>
-                    </h4>
-                    <SplitButton
-                        model={menuItems.filter(
-                        (m) => !(m.icon === "pi pi-trash" && items?.length === 0),
-                        )}
-                        dropdownIcon="pi pi-ellipsis-h"
-                        buttonClassName="hidden"
-                        menuButtonClassName="ml-1 p-button-text"
+              <div className="surface-overlay shadow-2 hidden absolute w-full left-0 top-100 h-30rem p-6 z-1">
+                <div className="border-2 border-dashed surface-border border-round h-full"></div>
+              </div>
+            </li>
+            <li className="flex">
+              <StyleClass
+                nodeRef={btnRef5}
+                selector="@next"
+                enterClassName="hidden"
+                leaveToClassName="hidden"
+                hideOnOutsideClick
+              >
+                <a
+                  ref={btnRef5}
+                  className="p-ripple font-medium inline-flex align-items-center cursor-pointer border-bottom-2 border-transparent hover:border-primary px-3 text-700 select-none"
+                >
+                  <span>Kids</span>
+                  <Ripple />
+                </a>
+              </StyleClass>
+              <div className="surface-overlay shadow-2 hidden absolute w-full left-0 top-100 h-30rem p-6 z-1">
+                <div className="border-2 border-dashed surface-border border-round h-full"></div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div className="surface-section px-4 py-8 md:px-6 lg:px-8">
+        <div className="flex flex-column align-items-center mb-6">
+          <div className="text-900 text-4xl mb-4 font-medium text-center">
+            Your cart total is $82.00
+          </div>
+          <p className="text-600 font-medium text-xl mt-0 mb-4">
+            FREE SHIPPING AND RETURN
+          </p>
+          <Button label="Check Out" onClick={() => navigate("/checkout")} />
+        </div>
+        <ul className="list-none p-0 m-0">
+          <li className="flex flex-column md:flex-row py-6 border-top-1 border-bottom-1 surface-border md:align-items-center">
+            <img
+              src="/photo/shoppingcart/shopping-cart-2-1.png"
+              className="w-12rem flex-shrink-0 mx-auto md:mx-0"
+              alt="shopping-cart-2-1"
+            />
+            <div className="flex-auto py-5 md:pl-5">
+              <div className="flex flex-wrap align-items-start sm:align-items-center sm:flex-row sm:justify-content-between surface-border pb-6">
+                <div className="w-full sm:w-6 flex flex-column">
+                  <span className="text-900 text-xl font-medium mb-3">
+                    Product Name
+                  </span>
+                  <span className="text-600">Medium</span>
+                </div>
+                <div className="w-full sm:w-6 flex align-items-start justify-content-between mt-3 sm:mt-0">
+                  <div>
+                    <Dropdown
+                      options={quantityOptions}
+                      value={value1}
+                      onChange={(e) => setValue1(e.value)}
                     />
+                  </div>
+                  <div className="flex flex-column sm:align-items-end">
+                    <span className="text-900 text-2xl font-medium mb-2 sm:mb-3">
+                      $20.00
+                    </span>
+                    <a
+                      className="cursor-pointer text-pink-500 font-medium hover:text-pink-600 transition-colors transition-duration-300"
+                      tabIndex="0"
+                    >
+                      Remove
+                    </a>
+                  </div>
                 </div>
-                <div className="col-6 flex justify-content-end">
-                    <>     
-                      {" "}      
-              <FilterMenu
-              fields={fields}
-              showFilter={showFilter}
-              setShowFilter={setShowFilter}
-              selectedFilterFields={selectedFilterFields}
-              setSelectedFilterFields={setSelectedFilterFields}
-              onClickSaveFilteredfields={onClickSaveFilteredfields}
+              </div>
+              <div className="flex flex-column">
+                <span className="inline-flex align-items-center mb-3">
+                  <i className="pi pi-envelope text-600 mr-2"></i>
+                  <span className="text-600 mr-2">Order today.</span>
+                </span>
+                <span className="inline-flex align-items-center mb-3">
+                  <i className="pi pi-send text-600 mr-2"></i>
+                  <span className="text-600 mr-2">
+                    Delivery by <span className="font-bold">Dec 23.</span>
+                  </span>
+                </span>
+                <span className="flex align-items-center">
+                  <i className="pi pi-exclamation-triangle text-600 mr-2"></i>
+                  <span className="text-600">Only 8 Available.</span>
+                </span>
+              </div>
+            </div>
+          </li>
+          <li className="flex flex-column md:flex-row py-6 border-top-1 border-bottom-1 surface-border md:align-items-center">
+            <img
+              src="/photo/shoppingcart/shopping-cart-2-2.png"
+              className="w-12rem flex-shrink-0 mx-auto md:mx-0"
+              alt="shopping-cart-2-2"
             />
-
-            <SortMenu
-              fields={fields}
-              data={data}
-              setData={setData}
-              initialData={initialData}
-              menuStyle={{ width: "200px" }}
-            />
-
-                    <Button label="add" style={{ height : '30px'}}
-rounded loading={loading} icon="pi pi-plus" onClick={() => setShowCreateDialog(true)} role="order-add-button"/>
-                    
-                    </>
+            <div className="flex-auto py-5 md:pl-5">
+              <div className="flex flex-wrap align-items-start sm:align-items-center sm:flex-row sm:justify-content-between surface-border pb-6">
+                <div className="w-full sm:w-6 flex flex-column">
+                  <span className="text-900 text-xl font-medium mb-3">
+                    Product Name
+                  </span>
+                  <span className="text-600">Medium</span>
                 </div>
+                <div className="w-full sm:w-6 flex align-items-start justify-content-between mt-3 sm:mt-0">
+                  <div>
+                    <Dropdown
+                      options={quantityOptions}
+                      value={value2}
+                      onChange={(e) => setValue2(e.value)}
+                    />
+                  </div>
+                  <div className="flex flex-column sm:align-items-end">
+                    <span className="text-900 text-2xl font-medium mb-2 sm:mb-3">
+                      $62.00
+                    </span>
+                    <a
+                      className="cursor-pointer text-pink-500 font-medium hover:text-pink-600 transition-colors transition-duration-300"
+                      tabIndex="0"
+                    >
+                      Remove
+                    </a>
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-column">
+                <span className="inline-flex align-items-center mb-3">
+                  <i className="pi pi-envelope text-600 mr-2"></i>
+                  <span className="text-600 mr-2">Order today.</span>
+                </span>
+                <span className="inline-flex align-items-center mb-3">
+                  <i className="pi pi-send text-600 mr-2"></i>
+                  <span className="text-600 mr-2">
+                    Delivery by <span className="font-bold">Dec 23.</span>
+                  </span>
+                </span>
+                <span className="flex align-items-center">
+                  <i className="pi pi-exclamation-triangle text-600 mr-2"></i>
+                  <span className="text-600">Only 2 Available.</span>
+                </span>
+              </div>
             </div>
-            <div className="grid align-items-center">
-                <div className="col-12" role="order-datatable">
-                    <OrderDatatable items={data} fields={fields} onRowDelete={onRowDelete} onEditRow={onEditRow} onRowClick={onRowClick} searchDialog={searchDialog} setSearchDialog={setSearchDialog}
-            showUpload={showUpload}
-            setShowUpload={setShowUpload}
-            showFilter={showFilter}
-            setShowFilter={setShowFilter}
-            showColumns={showColumns}
-            setShowColumns={setShowColumns}
-            onClickSaveFilteredfields={onClickSaveFilteredfields}
-            selectedFilterFields={selectedFilterFields}
-            setSelectedFilterFields={setSelectedFilterFields}
-            selectedHideFields={selectedHideFields}
-            setSelectedHideFields={setSelectedHideFields}
-            onClickSaveHiddenfields={onClickSaveHiddenfields}
-            loading={loading}
-            user={props.user}
-            selectedDelete={selectedDelete}
-            setSelectedDelete={setSelectedDelete}
-            onCreateResult={onCreateResult}
-/>            
-                 </div>
-            </div>
-            <DownloadCSV
+          </li>
+        </ul>
+        <div className="flex">
+          <div className="w-12rem hidden md:block"></div>
+          <ul className="list-none py-0 pr-0 pl-0 md:pl-5 mt-6 mx-0 mb-0 flex-auto">
+            <li className="flex justify-content-between mb-4">
+              <span className="text-xl text-900">Subtotal</span>
+              <span className="text-xl text-900">$82.00</span>
+            </li>
+            <li className="flex justify-content-between mb-4">
+              <span className="text-xl text-900">Shipping</span>
+              <span className="text-xl text-900">Free</span>
+            </li>
+            <li className="flex justify-content-between mb-4">
+              <span className="text-xl text-900">VAT</span>
+              <span className="text-xl text-900">$8.00</span>
+            </li>
+            <li className="flex justify-content-between border-top-1 surface-border mb-4 pt-4">
+              <span className="text-xl text-900 font-bold text-3xl">Total</span>
+              <span className="text-xl text-900 font-bold text-3xl">
+                $90.00
+              </span>
+            </li>
+            <li className="flex justify-content-end">
+              <Button label="Check Out" onClick={() => navigate("/checkout")} />
+            </li>
+          </ul>
+        </div>
+      </div>
+      <Divider className="w-full m-0" />
+      <div className="surface-section px-4 py-6 md:px-6 lg:px-8">
+        <div className="grid grid-nogutter text-center sm:text-left flex-wrap">
+          <div className="col-12 sm:col-6 md:col-4 lg:col-3 flex-column mt-4">
+            <span className="text-900 text-xl block">Company</span>
+            <ul className="list-none p-0">
+              <li>
+                <a
+                  tabIndex="0"
+                  className="text-600 hover:text-900 transition-duration-150 cursor-pointer mt-3 block"
+                >
+                  About Peak
+                </a>
+              </li>
+              <li>
+                <a
+                  tabIndex="0"
+                  className="text-600 hover:text-900 transition-duration-150 cursor-pointer mt-3 block"
+                >
+                  Factories
+                </a>
+              </li>
+              <li>
+                <a
+                  tabIndex="0"
+                  className="text-600 hover:text-900 transition-duration-150 cursor-pointer mt-3 block"
+                >
+                  Careers
+                </a>
+              </li>
+              <li>
+                <a
+                  tabIndex="0"
+                  className="text-600 hover:text-900 transition-duration-150 cursor-pointer mt-3 block"
+                >
+                  Environmental Initiatives
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <div className="col-12 sm:col-6 md:col-4 lg:col-3 flex-column mt-4">
+            <span className="text-900 text-xl block">Account</span>
+            <ul className="list-none p-0">
+              <li>
+                <a
+                  tabIndex="0"
+                  className="text-600 hover:text-900 transition-duration-150 cursor-pointer mt-3 block"
+                >
+                  Manage Account
+                </a>
+              </li>
+              <li>
+                <a
+                  tabIndex="0"
+                  className="text-600 hover:text-900 transition-duration-150 cursor-pointer mt-3 block"
+                >
+                  Saved Items
+                </a>
+              </li>
+              <li>
+                <a
+                  tabIndex="0"
+                  className="text-600 hover:text-900 transition-duration-150 cursor-pointer mt-3 block"
+                >
+                  My Cart
+                </a>
+              </li>
+              <li>
+                <a
+                  tabIndex="0"
+                  className="text-600 hover:text-900 transition-duration-150 cursor-pointer mt-3 block"
+                >
+                  Wishlist
+                </a>
+              </li>
+              <li>
+                <a
+                  tabIndex="0"
+                  className="text-600 hover:text-900 transition-duration-150 cursor-pointer mt-3 block"
+                >
+                  Orders & Returns
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <div className="col-12 sm:col-6 md:col-4 lg:col-3 flex-column mt-4">
+            <span className="text-900 text-xl block">Legal</span>
+            <ul className="list-none p-0">
+              <li>
+                <a
+                  tabIndex="0"
+                  className="text-600 hover:text-900 transition-duration-150 cursor-pointer mt-3 block"
+                >
+                  Investor Relations
+                </a>
+              </li>
+              <li>
+                <a
+                  tabIndex="0"
+                  className="text-600 hover:text-900 transition-duration-150 cursor-pointer mt-3 block"
+                >
+                  Data Privacy
+                </a>
+              </li>
+              <li>
+                <a
+                  tabIndex="0"
+                  className="text-600 hover:text-900 transition-duration-150 cursor-pointer mt-3 block"
+                >
+                  Terms of Service
+                </a>
+              </li>
+              <li>
+                <a
+                  tabIndex="0"
+                  className="text-600 hover:text-900 transition-duration-150 cursor-pointer mt-3 block"
+                >
+                  Legal Information
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <div className="col-12 sm:col-6 md:col-4 lg:col-3 flex-column mt-4">
+            <span className="text-900 text-xl block">Connect</span>
+            <ul className="list-none p-0">
+              <li>
+                <a
+                  tabIndex="0"
+                  className="text-600 hover:text-900 transition-duration-150 cursor-pointer mt-3 block"
+                >
+                  Instagram
+                </a>
+              </li>
+              <li>
+                <a
+                  tabIndex="0"
+                  className="text-600 hover:text-900 transition-duration-150 cursor-pointer mt-3 block"
+                >
+                  Twitter
+                </a>
+              </li>
+              <li>
+                <a
+                  tabIndex="0"
+                  className="text-600 hover:text-900 transition-duration-150 cursor-pointer mt-3 block"
+                >
+                  Facebook
+                </a>
+              </li>
+              <li>
+                <a
+                  tabIndex="0"
+                  className="text-600 hover:text-900 transition-duration-150 cursor-pointer mt-3 block"
+                >
+                  Pinterest
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div className="surface-200 px-4 py-2 md:px-6 lg:px-8 flex flex-column lg:flex-row justify-content-between align-items-center">
+        <div className="col-fixed flex flex-wrap flex-order-1 lg:flex-order-0 text-center lg:text-left">
+          <span className="text-500">
+            © 2022, Peak. Powered by PrimeBlocks.
+          </span>
+        </div>
+        <div className="col-fixed flex align-items-center flex-order-0 lg:flex-order-1">
+          <i className="pi pi-twitter p-1 text-sm text-900 cursor-pointer mr-3"></i>
+          <i className="pi pi-facebook p-1 text-sm text-900 cursor-pointer mr-3"></i>
+          <i className="pi pi-youtube p-1 text-sm text-900 cursor-pointer mr-3"></i>
+          <i className="pi pi-google p-1 text-sm text-900 cursor-pointer mr-3"></i>
+        </div>
+      </div>
+
+      <DownloadCSV
         data={data}
         fileName={filename}
         triggerDownload={triggerDownload}
         setTriggerDownload={setTriggerDownload}
       />
-            <AreYouSureDialog header="Delete" body="Are you sure you want to delete this record?" show={showAreYouSureDialog} onHide={() => setShowAreYouSureDialog(false)} onYes={() => deleteRow()} />
-            <OrderEditDialogComponent entity={_.find(data,{ _id : selectedEntityIndex})} show={showEditDialog} onHide={() => setShowEditDialog(false)} onEditResult={onEditResult} />
-            <OrderCreateDialogComponent entity={newRecord} onCreateResult={onCreateResult} show={showCreateDialog} onHide={() => setShowCreateDialog(false)}  />
-            <OrderFakerDialogComponent show={showFakerDialog} onHide={() => setShowFakerDialog(false)} onFakerCreateResults={onFakerCreateResults} />
-            <OrderSeederDialogComponent show={showSeederDialog} onHide={() => setShowSeederDialog(false)} onSeederResults={onSeederResults} />
-            <AreYouSureDialog header={`Drop ${data?.length} records`} body={`Are you sure you want to drop ${data?.length} records?`} show={showDeleteAllDialog} onHide={() => setShowDeleteAllDialog(false)} onYes={() => deleteAll()} loading={loading}/>
-            <div
-        id="rightsidebar"
-        className={classNames(
-          "overlay-auto z-1 surface-overlay shadow-2 absolute right-0 w-20rem animation-duration-150 animation-ease-in-out",
-          { hidden: !isHelpSidebarVisible, block : isHelpSidebarVisible }
-        )}
-        style={{ top: "60px", height: "calc(100% - 60px)" }}
-      >
-        <div className="flex flex-column h-full p-4">
-          <span className="text-xl font-medium text-900 mb-3">Help bar</span>
-          <div className="border-2 border-dashed surface-border border-round surface-section flex-auto"></div>
-        </div>
-      </div>
-        </div>
-    );
+      <AreYouSureDialog
+        header="Delete"
+        body="Are you sure you want to delete this record?"
+        show={showAreYouSureDialog}
+        onHide={() => setShowAreYouSureDialog(false)}
+        onYes={() => deleteRow()}
+      />
+      <AreYouSureDialog
+        header={`Drop ${data?.length} records`}
+        body={`Are you sure you want to drop ${data?.length} records?`}
+        show={showDeleteAllDialog}
+        onHide={() => setShowDeleteAllDialog(false)}
+        onYes={() => deleteAll()}
+        loading={loading}
+      />
+      <OrderEditDialogComponent
+        entity={_.find(data, { _id: selectedEntityIndex })}
+        show={showEditDialog}
+        onHide={() => setShowEditDialog(false)}
+        onEditResult={onEditResult}
+      />
+      <OrderCreateDialogComponent
+        entity={newRecord}
+        onCreateResult={onCreateResult}
+        show={showCreateDialog}
+        onHide={() => setShowCreateDialog(false)}
+      />
+      <OrderFakerDialogComponent
+        show={showFakerDialog}
+        onHide={() => setShowFakerDialog(false)}
+        onFakerCreateResults={onFakerCreateResults}
+      />
+      <OrderSeederDialogComponent
+        show={showSeederDialog}
+        onHide={() => setShowSeederDialog(false)}
+        onSeederResults={onSeederResults}
+      />
+    </>
+  );
 };
 
 const mapState = (state) => {
-    const { user, isLoggedIn } = state.auth;
-    return { user, isLoggedIn };
+  const { user, isLoggedIn } = state.auth;
+  return { user, isLoggedIn };
 };
 
 const mapDispatch = (dispatch) => ({
-    alert: (data) => dispatch.toast.alert(data),
-    getSchema: (serviceName) => dispatch.db.getSchema(serviceName),
-    hasServicePermission: (service) =>
-      dispatch.perms.hasServicePermission(service),
-    hasServiceFieldsPermission: (service) =>
-      dispatch.perms.hasServiceFieldsPermission(service),
-    show: () => dispatch.loading.show(),
-    hide: () => dispatch.loading.hide(),
-    
+  alert: (data) => dispatch.toast.alert(data),
+  getSchema: (serviceName) => dispatch.db.getSchema(serviceName),
+  hasServicePermission: (service) =>
+    dispatch.perms.hasServicePermission(service),
+  hasServiceFieldsPermission: (service) =>
+    dispatch.perms.hasServiceFieldsPermission(service),
+  show: () => dispatch.loading.show(),
+  hide: () => dispatch.loading.hide(),
 });
 
 export default connect(mapState, mapDispatch)(OrderPage);

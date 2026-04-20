@@ -15,8 +15,6 @@ describe("cart service", async () => {
   let usersServiceResults;
   let users;
 
-  
-
   beforeEach(async () => {
     thisService = await app.service("cart");
 
@@ -32,8 +30,8 @@ describe("cart service", async () => {
     if (usersServiceResults) {
       await Promise.all(
         usersServiceResults.map((i) =>
-          app.service("users").Model.findByIdAndDelete(i._id)
-        )
+          app.service("users").Model.findByIdAndDelete(i._id),
+        ),
       );
     }
   });
@@ -43,15 +41,15 @@ describe("cart service", async () => {
   });
 
   describe("#create", () => {
-    const options = {"customerName":"new value","productName":"new value"};
+    const options = { customerName: "new value", productName: "new value" };
 
     beforeEach(async () => {
-      cartCreated = await thisService.Model.create({...options, ...users});
+      cartCreated = await thisService.Model.create({ ...options, ...users });
     });
 
     it("should create a new cart", () => {
       assert.strictEqual(cartCreated.customerName, options.customerName);
-assert.strictEqual(cartCreated.productName, options.productName);
+      assert.strictEqual(cartCreated.productName, options.productName);
     });
   });
 
@@ -63,16 +61,19 @@ assert.strictEqual(cartCreated.productName, options.productName);
   });
 
   describe("#update", () => {
-    const options = {"customerName":"updated value","productName":"updated value"};
+    const options = {
+      customerName: "updated value",
+      productName: "updated value",
+    };
 
     it("should update an existing cart ", async () => {
       const cartUpdated = await thisService.Model.findByIdAndUpdate(
-        cartCreated._id, 
-        options, 
-        { new: true } // Ensure it returns the updated doc
+        cartCreated._id,
+        options,
+        { new: true }, // Ensure it returns the updated doc
       );
       assert.strictEqual(cartUpdated.customerName, options.customerName);
-assert.strictEqual(cartUpdated.productName, options.productName);
+      assert.strictEqual(cartUpdated.productName, options.productName);
     });
   });
 
@@ -82,10 +83,13 @@ assert.strictEqual(cartUpdated.productName, options.productName);
         .service("users")
         .Model.findByIdAndDelete(usersServiceResults._id);
 
-      ;
-
-      const cartDeleted = await thisService.Model.findByIdAndDelete(cartCreated._id);
-      assert.strictEqual(cartDeleted._id.toString(), cartCreated._id.toString());
+      const cartDeleted = await thisService.Model.findByIdAndDelete(
+        cartCreated._id,
+      );
+      assert.strictEqual(
+        cartDeleted._id.toString(),
+        cartCreated._id.toString(),
+      );
     });
   });
 });
